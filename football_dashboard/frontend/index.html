@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Academy Management System - Login</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">
+                <i class="fas fa-futbol"></i>
+            </div>
+            <h1>Football Academy</h1>
+            <p>Management System</p>
+        </div>
+        
+        <div class="login-form-container">
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Username
+                    </label>
+                    <input type="text" id="username" name="username" required 
+                           placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password
+                    </label>
+                    <input type="password" id="password" name="password" required 
+                           placeholder="Enter your password">
+                </div>
+                
+                <div class="form-group remember-me">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                
+                <div class="login-error" id="loginError"></div>
+            </form>
+            
+            <div class="login-footer">
+                <p>Welcome to the Rwanda Football Academy Management System</p>
+                <p class="system-info">FERWAFA • Schools • Academies • Clubs • Scouts</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        // Check if already logged in
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            window.location.href = 'dashboard.html';
+        }
+        
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            errorDiv.textContent = '';
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Store token and user info
+                    localStorage.setItem('access_token', data.access_token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect based on role
+                    redirectToDashboard(data.user.role);
+                } else {
+                    errorDiv.textContent = data.error || 'Login failed. Please try again.';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Connection error. Please check if the server is running.';
+            }
+        });
+        
+        function redirectToDashboard(role) {
+            const dashboardPages = {
+                'school': 'school.html',
+                'academy': 'academy.html',
+                'club': 'club.html',
+                'scout': 'scout.html',
+                'ferwafa': 'ferwafa.html',
+                'superadmin': 'superadmin.html'
+            };
+            
+            const page = dashboardPages[role] || 'dashboard.html';
+            window.location.href = page;
+        }
+    </script>
+</body>
+</html>

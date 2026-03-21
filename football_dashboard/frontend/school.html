@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Dashboard - Football Academy Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-school"></i>
+                </div>
+                <h2>School Team</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="school.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#players"><i class="fas fa-users"></i> Players</a></li>
+                    <li><a href="#matches"><i class="fas fa-futbol"></i> Matches</a></li>
+                    <li><a href="#performance"><i class="fas fa-chart-line"></i> Performance</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">School Admin</span>
+                        <span class="badge role-school">School</span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">School Football Team Dashboard</h1>
+                <div class="header-actions">
+                    <div class="school-badge">
+                        <i class="fas fa-graduation-cap"></i> School Level
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- School Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Players</h3>
+                            <p class="stat-number" id="totalPlayers">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Matches Played</h3>
+                            <p class="stat-number" id="matchesPlayed">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Wins</h3>
+                            <p class="stat-number" id="totalWins">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Best Player</h3>
+                            <p class="stat-text" id="bestPlayer">N/A</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Players Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> School Players</h3>
+                        <button class="btn btn-primary" onclick="showAddPlayerModal()">
+                            <i class="fas fa-plus"></i> Add Player
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="playersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Reg. Number</th>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Jersey #</th>
+                                        <th>Age</th>
+                                        <th>Goals</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="playersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Match Schedule -->
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Recent Results</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="matches-list" id="recentMatches"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-calendar-alt"></i> Upcoming Matches</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="matches-list" id="upcomingMatches"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Player Modal -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Player</h3>
+                <button class="modal-close" onclick="closePlayerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="playerForm" class="modal-form">
+                <input type="hidden" id="playerId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="playerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" id="playerDob" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nationality *</label>
+                        <select id="playerNationality" required>
+                            <option value="">Select</option>
+                            <option value="Rwandan">Rwandan</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Position *</label>
+                        <select id="playerPosition" required>
+                            <option value="">Select</option>
+                            <option value="Goalkeeper">Goalkeeper</option>
+                            <option value="Defender">Defender</option>
+                            <option value="Midfielder">Midfielder</option>
+                            <option value="Forward">Forward</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jersey Number</label>
+                    <input type="number" id="playerJersey" min="1" max="99">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePlayerModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Player</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        // Initialize for school role
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadDashboard();
+        });
+    </script>
+</body>
+</html>

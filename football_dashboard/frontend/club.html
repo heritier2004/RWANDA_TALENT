@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Club Dashboard - Football Academy Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2>Football Club</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="club.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#players"><i class="fas fa-users"></i> Players</a></li>
+                    <li><a href="#matches"><i class="fas fa-futbol"></i> Matches</a></li>
+                    <li><a href="#lineup"><i class="fas fa-list"></i> Lineup</a></li>
+                    <li><a href="#ml"><i class="fas fa-camera"></i> Photo ML</a></li>
+                    <li><a href="#stats"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">Club Admin</span>
+                        <span class="badge role-club">Club</span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="main-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Football Club Dashboard</h1>
+                <div class="header-actions">
+                    <div class="club-badge">
+                        <i class="fas fa-shield-alt"></i> Club Level
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- Club Stats -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Players</h3>
+                            <p class="stat-number" id="totalPlayers">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Active Matches</h3>
+                            <p class="stat-number" id="activeMatches">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Wins This Season</h3>
+                            <p class="stat-number" id="wins">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Top Scorer</h3>
+                            <p class="stat-text" id="topScorer">N/A</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Players Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> Club Players</h3>
+                        <button class="btn btn-primary" onclick="showAddPlayerModal()">
+                            <i class="fas fa-plus"></i> Add Player
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="playersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Photo</th>
+                                        <th>Reg. Number</th>
+                                        <th>Name</th>
+                                        <th>Position</th>
+                                        <th>Jersey #</th>
+                                        <th>Goals</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="playersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Match Management & ML -->
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-futbol"></i> Match Management</h3>
+                            <button class="btn btn-primary" onclick="showAddMatchModal()">
+                                <i class="fas fa-plus"></i> Schedule Match
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="matches-list" id="matchList"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-camera"></i> Player Recognition (ML)</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="ml-upload-section">
+                                <div class="upload-area" id="uploadArea">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Drag & drop player photos here</p>
+                                    <span>or</span>
+                                    <button class="btn btn-secondary" onclick="document.getElementById('mlInput').click()">
+                                        Browse Files
+                                    </button>
+                                    <input type="file" id="mlInput" accept="image/*" hidden multiple>
+                                </div>
+                                <div class="ml-status" id="mlStatus">
+                                    <p><i class="fas fa-info-circle"></i> Upload photos for player identification</p>
+                                    <p class="ml-note">CPU-friendly processing • Multiple camera support ready</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lineup Section -->
+                <div class="card" id="lineupSection">
+                    <div class="card-header">
+                        <h3><i class="fas fa-list"></i> Match Lineup</h3>
+                        <select id="matchSelect" onchange="loadLineup()">
+                            <option value="">Select Match</option>
+                        </select>
+                    </div>
+                    <div class="card-body">
+                        <div class="lineup-grid">
+                            <div class="lineup-section">
+                                <h4>Starting XI</h4>
+                                <div class="lineup-players" id="startingXI"></div>
+                            </div>
+                            <div class="lineup-section">
+                                <h4>Bench</h4>
+                                <div class="lineup-players bench" id="benchPlayers"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Player Modal -->
+    <div class="modal" id="playerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Player</h3>
+                <button class="modal-close" onclick="closePlayerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="playerForm" class="modal-form">
+                <input type="hidden" id="playerId">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Full Name *</label>
+                        <input type="text" id="playerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth *</label>
+                        <input type="date" id="playerDob" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nationality *</label>
+                        <select id="playerNationality" required>
+                            <option value="">Select</option>
+                            <option value="Rwandan">Rwandan</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Position *</label>
+                        <select id="playerPosition" required>
+                            <option value="">Select</option>
+                            <option value="Goalkeeper">Goalkeeper</option>
+                            <option value="Defender">Defender</option>
+                            <option value="Midfielder">Midfielder</option>
+                            <option value="Forward">Forward</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Jersey Number</label>
+                    <input type="number" id="playerJersey" min="1" max="99">
+                </div>
+                <div class="form-group">
+                    <label>Photo URL</label>
+                    <input type="url" id="playerPhoto" placeholder="https://...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closePlayerModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Player</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Match Modal -->
+    <div class="modal" id="matchModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Schedule New Match</h3>
+                <button class="modal-close" onclick="closeMatchModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="matchForm" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Home Team</label>
+                        <input type="text" id="homeTeam" value="Our Club" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Away Team *</label>
+                        <input type="text" id="awayTeam" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Match Date *</label>
+                        <input type="datetime-local" id="matchDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Venue *</label>
+                        <input type="text" id="matchVenue" required>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeMatchModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Schedule Match</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadDashboard();
+            initMLUpload();
+        });
+    </script>
+</body>
+</html>

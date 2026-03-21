@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FERWAFA Dashboard - Football Academy Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar ferwafa-sidebar">
+            <div class="sidebar-header">
+                <div class="logo ferwafa-logo">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <h2>FERWAFA</h2>
+                <span class="subtitle">Rwanda Football Association</span>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="ferwafa.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#overview"><i class="fas fa-chart-pie"></i> Overview</a></li>
+                    <li><a href="#clubs"><i class="fas fa-shield-alt"></i> Clubs</a></li>
+                    <li><a href="#academies"><i class="fas fa-graduation-cap"></i> Academies</a></li>
+                    <li><a href="#players"><i class="fas fa-users"></i> All Players</a></li>
+                    <li><a href="#matches"><i class="fas fa-futbol"></i> Matches</a></li>
+                    <li><a href="#statistics"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">FERWAFA Admin</span>
+                        <span class="badge role-ferwafa">FERWAFA</span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content ferwafa-content">
+            <header class="main-header ferwafa-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">Rwanda Football Association Dashboard</h1>
+                <div class="header-actions">
+                    <div class="ferwafa-badge">
+                        <i class="fas fa-flag"></i> FERWAFA
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- FERWAFA Overview Stats -->
+                <div class="stats-grid ferwafa-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Registered Clubs</h3>
+                            <p class="stat-number" id="totalClubs">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Academies</h3>
+                            <p class="stat-number" id="totalAcademies">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-school"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Schools</h3>
+                            <p class="stat-number" id="totalSchools">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Players</h3>
+                            <p class="stat-number" id="totalPlayers">0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Series Overview -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> League Overview</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="league-standings">
+                            <div class="league-table">
+                                <h4>Professional Clubs</h4>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Club</th>
+                                            <th>Played</th>
+                                            <th>Won</th>
+                                            <th>Drawn</th>
+                                            <th>Lost</th>
+                                            <th>Points</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="clubStandings"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Entity Summary -->
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-shield-alt"></i> Top Clubs by Players</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="entity-list" id="topClubs"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-star"></i> Top Performers</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="top-performers" id="topPerformers"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- All Players (FERWAFA can see everyone) -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> All Registered Players</h3>
+                        <div class="card-actions">
+                            <input type="text" placeholder="Search players..." id="playerSearch" 
+                                   onkeyup="searchAllPlayers()">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="allPlayersTable">
+                                <thead>
+                                    <tr>
+                                        <th>Reg. Number</th>
+                                        <th>Name</th>
+                                        <th>Entity</th>
+                                        <th>Position</th>
+                                        <th>Jersey #</th>
+                                        <th>Nationality</th>
+                                        <th>Goals</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allPlayersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadFERWAFADashboard();
+        });
+    </script>
+</body>
+</html>
