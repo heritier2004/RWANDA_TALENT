@@ -1,258 +1,717 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Super Admin - Football Academy Management</title>
+    <title>Super Admin - Rwanda Football Management</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <div class="dashboard-wrapper">
         <!-- Sidebar -->
-        <aside class="sidebar admin-sidebar">
-            <div class="sidebar-header">
-                <div class="logo admin-logo">
-                    <i class="fas fa-crown"></i>
-                </div>
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-crown"></i>
                 <h2>Super Admin</h2>
             </div>
-            
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="active"><a href="superadmin.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#users"><i class="fas fa-users-cog"></i> User Management</a></li>
-                    <li><a href="#entities"><i class="fas fa-building"></i> Entities</a></li>
-                    <li><a href="#players"><i class="fas fa-users"></i> All Players</a></li>
-                    <li><a href="#matches"><i class="fas fa-futbol"></i> Matches</a></li>
-                    <li><a href="#database"><i class="fas fa-database"></i> Database</a></li>
-                    <li><a href="#settings"><i class="fas fa-cog"></i> Settings</a></li>
-                </ul>
+
+            <nav id="sidebarNav">
+                <a href="#" class="active" onclick="handleMenuClick(this, 'dashboard')"><i class="fas fa-home"></i>
+                    Overview</a>
+                <a href="#" onclick="handleMenuClick(this, 'clubs')"><i class="fas fa-shield-alt"></i> Clubs</a>
+                <a href="#" onclick="handleMenuClick(this, 'academies')"><i class="fas fa-graduation-cap"></i>
+                    Academies</a>
+                <a href="#" onclick="showSection('statistics')"><i class="fas fa-chart-line"></i> Analytics</a>
+            <a href="#" onclick="showSection('system-logs')"><i class="fas fa-history"></i> System Logs</a>
+            <a href="#" onclick="showSection('error-tracking')"><i class="fas fa-exclamation-triangle"></i> Error Tracking</a>
+            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                <a href="#" onclick="handleMenuClick(this, 'schools')"><i class="fas fa-school"></i> Schools</a>
+                <a href="#" onclick="handleMenuClick(this, 'scouts')"><i class="fas fa-search"></i> Scouts</a>
+                <a href="#" onclick="handleMenuClick(this, 'ferwafa')"><i class="fas fa-flag"></i> FERWAFA</a>
+                <a href="#" onclick="handleMenuClick(this, 'players')"><i class="fas fa-users"></i> All Players</a>
+                <a href="#" onclick="handleMenuClick(this, 'matches')"><i class="fas fa-futbol"></i> Matches</a>
+                <a href="#" onclick="handleMenuClick(this, 'live-stream')"><i class="fas fa-video"></i> Live Streams</a>
+                <a href="#" onclick="handleMenuClick(this, 'users')"><i class="fas fa-user-cog"></i> User Accounts</a>
+                <a href="#" onclick="handleMenuClick(this, 'settings')"><i class="fas fa-cog"></i> Settings</a>
             </nav>
-            
+
             <div class="sidebar-footer">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <i class="fas fa-user-circle"></i>
+                        <i class="fas fa-user-shield"></i>
                     </div>
                     <div class="user-details">
-                        <span id="userName">Super Admin</span>
-                        <span class="badge role-admin">Super Admin</span>
+                        <span id="userName">System God</span>
+                        <span>Full Access</span>
                     </div>
                 </div>
                 <button class="btn-logout" onclick="logout()">
-                    <i class="fas fa-sign-out-alt"></i>
+                    <i class="fas fa-power-off"></i>
                 </button>
             </div>
         </aside>
-        
+
         <!-- Main Content -->
-        <main class="main-content admin-content">
-            <header class="main-header admin-header">
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1 class="page-title">System Administration</h1>
+        <main class="main-content">
+            <header class="main-header">
+                <h1 class="page-title">Command Center</h1>
                 <div class="header-actions">
-                    <div class="admin-badge">
-                        <i class="fas fa-crown"></i> Full Access
+                    <div class="header-search">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Global search anything...">
                     </div>
+                    <button class="btn-notification">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge"></span>
+                    </button>
                 </div>
             </header>
-            
-            <div class="dashboard-content">
-                <!-- System Stats -->
-                <div class="stats-grid admin-stats">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users-cog"></i>
+
+            <div class="content-area dashboard-content">
+
+                <!-- ================= OVERVIEW DASHBOARD ================= -->
+                <div id="dashboard" class="section active">
+                    <div class="stats-header">
+                        <h2>Dashboard Insights</h2>
+                        <button class="btn-refresh" onclick="loadSuperAdminDashboard()"><i class="fas fa-sync-alt"></i>
+                            Refresh</button>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-users-cog"></i></div>
+                            <div class="stat-content">
+                                <h4>Total Users</h4>
+                                <div class="value" id="totalUsers">0</div>
+                            </div>
                         </div>
-                        <div class="stat-info">
-                            <h3>Total Users</h3>
-                            <p class="stat-number" id="totalUsers">0</p>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-futbol"></i></div>
+                            <div class="stat-content">
+                                <h4>Total Players</h4>
+                                <div class="value" id="totalPlayers">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-school"></i></div>
+                            <div class="stat-content">
+                                <h4>Total Schools</h4>
+                                <div class="value" id="totalSchools">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="stat-content">
+                                <h4>Clubs Managed</h4>
+                                <div class="value" id="totalClubs">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="stat-content">
+                                <h4>Academies</h4>
+                                <div class="value" id="totalAcademies">0</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-database"></i></div>
+                            <div class="stat-content">
+                                <h4>DB Storage</h4>
+                                <div class="value" id="dbSize">0 MB</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Clubs</h3>
-                            <p class="stat-number" id="totalClubs">0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-graduation-cap"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Academies</h3>
-                            <p class="stat-number" id="totalAcademies">0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon active">
-                            <i class="fas fa-database"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Database Size</h3>
-                            <p class="stat-text" id="dbSize">0 MB</p>
+
+                    <!-- Quick Entities -->
+                    <div class="form-row">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-bolt"></i> Quick Actions & Users</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                                    <button class="btn btn-primary btn-sm" onclick="showAddEntityModal('club')"><i
+                                            class="fas fa-plus"></i> Club</button>
+                                    <button class="btn btn-primary btn-sm" onclick="showAddEntityModal('academy')"><i
+                                            class="fas fa-plus"></i> Academy</button>
+                                    <button class="btn btn-primary btn-sm" onclick="showAddEntityModal('school')"><i
+                                            class="fas fa-plus"></i> School</button>
+                                </div>
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                            <th>Linked Entity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="quickUsersTable">
+                                        <tr>
+                                            <td colspan="3" class="empty-state">Loading users...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- User Management -->
-                <div class="card">
+
+                <!-- ================= CLUBS ================= -->
+                <div class="card section" id="clubs" style="display:none;">
                     <div class="card-header">
-                        <h3><i class="fas fa-users-cog"></i> User Management</h3>
-                        <button class="btn btn-primary" onclick="showAddUserModal()">
-                            <i class="fas fa-plus"></i> Add User
+                        <h3><i class="fas fa-shield-alt"></i> Clubs Directory</h3>
+                        <button class="btn btn-primary" onclick="showAddEntityModal('club')">
+                            <i class="fas fa-plus"></i> Register Club
                         </button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="data-table" id="usersTable">
+                            <table class="data-table">
                                 <thead>
                                     <tr>
-                                        <th>ID</th>
-                                        <th>Username</th>
-                                        <th>Email</th>
-                                        <th>Role</th>
-                                        <th>Entity ID</th>
-                                        <th>Created</th>
+                                        <th>Registration ID</th>
+                                        <th>Name</th>
+                                        <th>Short Name</th>
+                                        <th>Stadium</th>
+                                        <th>Founded</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="usersTableBody"></tbody>
+                                <tbody id="clubsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No clubs registered yet.</td>
+                                    </tr>
+                                </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Entity Management -->
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-building"></i> Manage Clubs</h3>
-                            <button class="btn btn-secondary" onclick="showAddEntityModal('club')">
-                                <i class="fas fa-plus"></i> Add Club
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="entity-list" id="clubsList"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-graduation-cap"></i> Manage Academies</h3>
-                            <button class="btn btn-secondary" onclick="showAddEntityModal('academy')">
-                                <i class="fas fa-plus"></i> Add Academy
-                            </button>
-                        </div>
-                        <div class="card-body">
-                            <div class="entity-list" id="academiesList"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- System Settings -->
-                <div class="card">
+
+                <!-- ================= ACADEMIES ================= -->
+                <div class="card section" id="academies" style="display:none;">
                     <div class="card-header">
-                        <h3><i class="fas fa-cog"></i> System Settings</h3>
+                        <h3><i class="fas fa-graduation-cap"></i> Academies Directory</h3>
+                        <button class="btn btn-primary" onclick="showAddEntityModal('academy')">
+                            <i class="fas fa-plus"></i> Register Academy
+                        </button>
                     </div>
                     <div class="card-body">
-                        <div class="settings-grid">
-                            <div class="setting-item">
-                                <label>Live Update Interval</label>
-                                <select id="updateInterval">
-                                    <option value="15" selected>15 minutes</option>
-                                    <option value="30">30 minutes</option>
-                                    <option value="60">1 hour</option>
-                                </select>
-                            </div>
-                            <div class="setting-item">
-                                <label>ML Processing</label>
-                                <select id="mlSetting">
-                                    <option value="cpu" selected>CPU Only</option>
-                                    <option value="gpu">GPU (if available)</option>
-                                </select>
-                            </div>
-                            <div class="setting-item">
-                                <label>Data Retention</label>
-                                <select id="retention">
-                                    <option value="1">1 Year</option>
-                                    <option value="2">2 Years</option>
-                                    <option value="5">5 Years</option>
-                                </select>
-                            </div>
-                            <div class="setting-item">
-                                <button class="btn btn-primary" onclick="saveSettings()">
-                                    Save Settings
-                                </button>
-                            </div>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Registration ID</th>
+                                        <th>Academy Name</th>
+                                        <th>Director</th>
+                                        <th>Location</th>
+                                        <th>Established</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="academiesTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No academies registered yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
+
+                <!-- ================= SCHOOLS ================= -->
+                <div class="card section" id="schools" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-school"></i> Schools Directory</h3>
+                        <button class="btn btn-primary" onclick="showAddEntityModal('school')">
+                            <i class="fas fa-plus"></i> Register School
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Registration ID</th>
+                                        <th>School Name</th>
+                                        <th>Address</th>
+                                        <th>District</th>
+                                        <th>Established</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="schoolsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No schools registered yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SCOUTS ================= -->
+                <div class="card section" id="scouts" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-search"></i> Talent Scouts</h3>
+                        <button class="btn btn-primary" onclick="showAddEntityModal('scout')">
+                            <i class="fas fa-plus"></i> Register Scout
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Scout ID</th>
+                                        <th>Full Name</th>
+                                        <th>Email</th>
+                                        <th>Phone</th>
+                                        <th>Assigned Region</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="scoutsTableBody">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">No scouts registered yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= PLAYERS (All Database) ================= -->
+                <div class="card section" id="players" style="display:none;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-running"></i> Registered Players</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="loadSectionData('players', true)"><i
+                                    class="fas fa-sync"></i> Refresh</button>
+                            <button class="btn btn-primary" onclick="showAddPlayerModal()"><i
+                                    class="fas fa-user-plus"></i> New Player</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Reg No.</th>
+                                        <th>Full Name</th>
+                                        <th>Position</th>
+                                        <th>Entity Type</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="playersTableBody">
+                                    <tr>
+                                        <td colspan="5" class="empty-state">Loading all universal player data...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= USERS ================= -->
+                <div class="card section" id="users" style="display:none;">
+                    <div class="card-header">
+                        <h2><i class="fas fa-users"></i> Account Management</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-secondary" onclick="loadSectionData('users', true)"><i
+                                    class="fas fa-sync"></i> Refresh</button>
+                            <button class="btn btn-primary" onclick="showAddUserModal()"><i
+                                    class="fas fa-user-plus"></i> New Account</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Account ID</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Linked Entity ID</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="userTable">
+                                    <tr>
+                                        <td colspan="6" class="empty-state">Loading administrative accounts...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= SETTINGS ================= -->
+                <div class="card section" id="settings" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog"></i> Core System Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="settingsForm" style="max-width: 600px;">
+                            <div class="form-group">
+                                <label>Machine Learning Hardware Processing</label>
+                                <select id="mlSetting">
+                                    <option value="cpu" selected>CPU Processing (Stable)</option>
+                                    <option value="gpu">GPU Tensor Processing (Fast)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Database Data Retention Policy</label>
+                                <select id="retention">
+                                    <option value="1">1 Year Auto-Clear</option>
+                                    <option value="2">2 Years</option>
+                                    <option value="5" selected>5 Years Permanent</option>
+                                </select>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save
+                                    Configuration</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            <!-- System Logs Section -->
+        <section id="system-logs" class="section" style="display: none;">
+            <div class="header-content">
+                <h2>System Usage History</h2>
+                <div class="actions">
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="logSearch" placeholder="Search actions..." onkeyup="filterLogs()">
+                    </div>
+                    <button class="btn-primary" onclick="loadSystemLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
             </div>
-        </main>
+
+            <div class="glass-card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Target Table</th>
+                                <th>Record ID</th>
+                                <th>IP Address</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            <!-- Logs will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Tracking Section -->
+        <section id="error-tracking" class="section" style="display: none;">
+            <div class="header-content">
+                <h2>System Error Tracking</h2>
+                <div class="actions">
+                    <select id="errorSeverityFilter" onchange="loadErrorLogs()">
+                        <option value="">All Severities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical">Critical</option>
+                    </select>
+                    <button class="btn-primary" onclick="loadErrorLogs()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Severity</th>
+                                <th>Error Message</th>
+                                <th>Endpoint/URL</th>
+                                <th>User</th>
+                                <th>Timestamp</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="errorsTableBody">
+                            <!-- Errors will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     </div>
-    
-    <!-- Add User Modal -->
-    <div class="modal" id="userModal">
-        <div class="modal-content">
+
+    <!-- ================= UNIFIED ENTITY MODAL ================= -->
+    <div class="modal-overlay" id="entityModal">
+        <div class="modal">
             <div class="modal-header">
-                <h3>Add New User</h3>
+                <h3 id="entityModalTitle">Register Entity</h3>
+                <button class="modal-close" onclick="closeEntityModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="entityForm">
+                    <input type="hidden" id="entityType" value="">
+                    <input type="hidden" id="entityId" value="">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Official Name *</label>
+                            <input type="text" id="entityName" required placeholder="e.g. Kigali City FC">
+                        </div>
+                        <div class="form-group" id="entityEmailGroup">
+                            <label>Contact Email *</label>
+                            <input type="email" id="entityEmail" required placeholder="email@example.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" id="entityShortNameGroup">
+                            <label>Short Name / Abbreviation</label>
+                            <input type="text" id="entityShortName" placeholder="KGC">
+                        </div>
+                        <div class="form-group">
+                            <label>Address / Home District</label>
+                            <input type="text" id="entityLocation" placeholder="Gasabo">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group" id="entityStadiumGroup">
+                            <label>Stadium Name (Clubs)</label>
+                            <input type="text" id="entityStadium" placeholder="Amahoro Stadium">
+                        </div>
+                        <div class="form-group" id="entityFoundedGroup">
+                            <label>Founded / Established Year</label>
+                            <input type="number" id="entityFounded" placeholder="1995" min="1800" max="2100">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-camera"></i> Player Photo</label>
+                            <input type="file" id="playerPhotoFile" accept="image/*" class="file-input">
+                            <input type="hidden" id="playerPhoto">
+                            <small>Upload clear professional headshots only.</small>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-weight-hanging"></i> Weight (kg)</label>
+                            <input type="number" id="playerWeight" placeholder="70" min="20" max="150">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" id="entityPhone" placeholder="+250...">
+                    </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn btn-secondary" onclick="closeEntityModal()">Cancel</button>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Save Details</button>
+            </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <!-- ================= USER ACCOUNT MODAL ================= -->
+    <div class="modal-overlay" id="userModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="userModalTitle">Generate System Account</h3>
                 <button class="modal-close" onclick="closeUserModal()">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <form id="userForm" class="modal-form">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Username *</label>
-                        <input type="text" id="newUsername" required>
+            <div class="modal-body">
+                <form id="userForm">
+                    <input type="hidden" id="newUserId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Username *</label>
+                            <input type="text" id="newUsername" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="newEmail" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Password *</label>
+                            <input type="password" id="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Role Assignment *</label>
+                            <select id="newRole" required>
+                                <option value="">Select Security Role...</option>
+                                <option value="school">School Authority</option>
+                                <option value="academy">Academy Director</option>
+                                <option value="club">Club Manager</option>
+                                <option value="scout">Talent Scout</option>
+                                <option value="ferwafa">FERWAFA Inspector</option>
+                                <option value="superadmin">Super Admin (God)</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label>Email *</label>
-                        <input type="email" id="newEmail" required>
+                        <label>Linked Entity ID (Leave blank if not applicable)</label>
+                        <input type="number" id="newEntityId" placeholder="e.g. 12">
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Password *</label>
-                        <input type="password" id="newPassword" required>
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+                        <button type="submit" class="btn btn-danger"><i class="fas fa-user-plus"></i> Grant
+                            Access</button>
                     </div>
-                    <div class="form-group">
-                        <label>Role *</label>
-                        <select id="newRole" required>
-                            <option value="">Select Role</option>
-                            <option value="school">School</option>
-                            <option value="academy">Academy</option>
-                            <option value="club">Club</option>
-                            <option value="scout">Scout</option>
-                            <option value="ferwafa">FERWAFA</option>
-                            <option value="superadmin">Super Admin</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
-                    <button type="submit" class="btn btn-primary">Create User</button>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
     </div>
-    
+
+
+    <!-- ================= PLAYER MODAL ================= -->
+    <div class="modal-overlay" id="playerModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="playerModalTitle">Force Register Player</h3>
+                <button class="modal-close" onclick="closePlayerModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <form id="playerForm">
+                    <input type="hidden" id="playerId">
+
+                    <div class="form-section-title">Entity Assignment (Superadmin Only)</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Associate With</label>
+                            <select id="playerEntityType" onchange="loadEntitiesForSelect()">
+                                <option value="school">School</option>
+                                <option value="academy">Academy</option>
+                                <option value="club">Club</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Entity</label>
+                            <select id="playerEntityId" required>
+                                <option value="">Select entity...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Entity Assignment</label>
+                            <p class="form-hint">Select entity type and name above, then fill player details below.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">Personal Details</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-user"></i> Full Name *</label>
+                            <input type="text" id="playerName" placeholder="Jean Baptiste" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-calendar-alt"></i> Date of Birth *</label>
+                            <input type="date" id="playerDob" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-flag"></i> Nationality *</label>
+                            <input type="text" id="playerNationality" value="Rwandan" required>
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-running"></i> Position *</label>
+                            <select id="playerPosition" required>
+                                <option value="">Select Position</option>
+                                <option value="Goalkeeper">Goalkeeper</option>
+                                <option value="Defender">Defender</option>
+                                <option value="Midfielder">Midfielder</option>
+                                <option value="Forward">Forward</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-tshirt"></i> Jersey Number</label>
+                            <input type="number" id="playerJersey" placeholder="10">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-ruler-vertical"></i> Height (cm)</label>
+                            <input type="text" id="playerHeight" placeholder="175">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label><i class="fas fa-weight-hanging"></i> Weight (kg)</label>
+                            <input type="number" id="playerWeight" placeholder="70">
+                        </div>
+                        <div class="form-group">
+                            <label><i class="fas fa-camera"></i> Photo</label>
+                            <input type="file" id="playerPhotoFile" accept="image/*">
+                            <input type="hidden" id="playerPhoto">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">Origin / Residence</div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>District</label>
+                            <input type="text" id="playerDistrict" placeholder="District">
+                        </div>
+                        <div class="form-group">
+                            <label>Sector</label>
+                            <input type="text" id="playerSector" placeholder="Sector">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Cell</label>
+                            <input type="text" id="playerCell" placeholder="Cell">
+                        </div>
+                        <div class="form-group">
+                            <label>Village</label>
+                            <input type="text" id="playerVillage" placeholder="Village">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closePlayerModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Player</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Logic Controller -->
     <script src="js/main.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            loadSuperAdminDashboard();
-        });
+        // Inline UI handler for sidebar highlights
+        function handleMenuClick(el, sectionId) {
+            document.querySelectorAll('#sidebarNav a').forEach(a => a.classList.remove('active'));
+            el.classList.add('active');
+            showSection(sectionId);
+        }
     </script>
 </body>
+
 </html>

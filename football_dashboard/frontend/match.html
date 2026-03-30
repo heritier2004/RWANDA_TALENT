@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match Day - Rwanda Talent</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Match Page Specific Styles */
+        .match-page {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 24px;
+            padding: 24px;
+        }
+
+        @media (max-width: 1200px) {
+            .match-page {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Match Header Card */
+        .match-header-card {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            border-radius: 16px;
+            padding: 28px;
+            color: white;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(30, 60, 114, 0.3);
+        }
+
+        .match-header-card h2 {
+            margin: 0 0 20px 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .match-header-card h2 i {
+            color: #ffd700;
+        }
+
+        .match-datetime {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .match-datetime-field {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .match-datetime-field label {
+            display: block;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            margin-bottom: 8px;
+        }
+
+        .match-datetime-field input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #1e3c72;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .match-datetime-field input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+
+        /* Match Venue */
+        .match-venue-field {
+            grid-column: 1 / -1;
+        }
+
+        /* Opponent Section */
+        .opponent-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .opponent-section h3 {
+            margin: 0 0 20px 0;
+            color: #1e3c72;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .opponent-section h3 i {
+            color: #e74c3c;
+        }
+
+        .opponent-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .opponent-form .form-group {
+            margin-bottom: 0;
+        }
+
+        .opponent-form label {
+            display: block;
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .opponent-form input, .opponent-form select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .opponent-form input:focus, .opponent-form select:focus {
+            outline: none;
+            border-color: #1e3c72;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        /* Squad Selection */
+        .squad-section {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 992px) {
+            .squad-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .squad-column {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .squad-column h3 {
+            margin: 0 0 16px 0;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        .squad-column.starting h3 {
+            color: #27ae60;
+        }
+
+        .squad-column.starting h3 i {
+            color: #27ae60;
+        }
+
+        .squad-column.bench h3 {
+            color: #e67e22;
+        }
+
+        .squad-column.bench h3 i {
+            color: #e67e22;
+        }
+
+        .squad-column.players h3 {
+            color: #1e3c72;
+        }
+
+        .squad-column.players h3 i {
+            color: #1e3c72;
+        }
+
+        .player-list {
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .player-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            cursor: grab;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .player-item:hover {
+            background: #e8f4fd;
+            border-color: #1e3c72;
+            transform: translateX(4px);
+        }
+
+        .player-item.dragging {
+            opacity: 0.5;
+            transform: scale(0.98);
+        }
+
+        .player-item .jersey {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .player-item .player-details {
+            flex: 1;
+        }
+
+        .player-item .player-details h4 {
+            margin: 0;
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .player-item .player-details p {
+            margin: 0;
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .player-item .position-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .position-gk { background: #fff3cd; color: #856404; }
+        .position-def { background: #d1ecf1; color: #0c5460; }
+        .position-mid { background: #d4edda; color: #155724; }
+        .position-fwd { background: #f8d7da; color: #721c24; }
+
+        /* Switch Button */
+        .player-item .switch-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .player-item .switch-btn.starting {
+            background: #27ae60;
+            color: white;
+        }
+
+        .player-item .switch-btn.bench {
+            background: #e67e22;
+            color: white;
+        }
+
+        .player-item .switch-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-item .remove-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            background: #fee;
+            color: #e74c3c;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .player-item .remove-btn:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .player-count {
+            text-align: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .player-count.valid {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .player-count.invalid {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Add Player Button */
+        .add-player-btn {
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed #cbd5e0;
+            border-radius: 10px;
+            background: transparent;
+            color: #7f8c8d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .add-player-btn:hover {
+            border-color: #1e3c72;
+            color: #1e3c72;
+            background: #f0f4f8;
+        }
+
+        /* AI Chat Section */
+        .ai-chat-section {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            height: fit-content;
+            position: sticky;
+            top: 24px;
+        }
+
+        .ai-chat-section h3 {
+            margin: 0 0 16px 0;
+            color: #1e3c72;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chat-section h3 i {
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-bottom: 16px;
+        }
+
+        .ai-status.online {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .ai-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6c757d;
+        }
+
+        .ai-status.online .dot {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+        }
+
+        .chat-message {
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user {
+            background: #1e3c72;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.ai {
+            background: white;
+            color: #2c3e50;
+            border: 1px solid #e0e6ed;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message .message-time {
+            font-size: 10px;
+            opacity: 0.7;
+            margin-top: 4px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .chat-input-container input:focus {
+            outline: none;
+            border-color: #1e3c72;
+        }
+
+        .chat-input-container button {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #6f42c1, #e83e8c);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input-container button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .quick-actions .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-save { background: #27ae60; color: white; }
+        .btn-save:hover { background: #219a52; }
+
+        .btn-reset { background: #e74c3c; color: white; }
+        .btn-reset:hover { background: #c0392b; }
+
+        .btn-share { background: #3498db; color: white; }
+        .btn-share:hover { background: #2980b9; }
+
+        .btn-generate { background: #9b59b6; color: white; }
+        .btn-generate:hover { background: #8e44ad; }
+
+        /* Match Link Generation */
+        .link-generation {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-generation h3 {
+            margin: 0 0 16px 0;
+            color: #1e3c72;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .link-generation h3 i {
+            color: #3498db;
+        }
+
+        .generated-link {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .generated-link input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 13px;
+            background: #f8f9fa;
+        }
+
+        .generated-link button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn { background: #3498db; color: white; }
+        .copy-btn:hover { background: #2980b9; }
+
+        .share-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .share-btn {
+            padding: 10px 16px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .share-btn:hover {
+            border-color: #1e3c72;
+            color: #1e3c72;
+        }
+
+        .share-btn.whatsapp:hover { border-color: #25D366; color: #25D366; }
+        .share-btn.twitter:hover { border-color: #1DA1F2; color: #1DA1F2; }
+        .share-btn.email:hover { border-color: #EA4335; color: #EA4335; }
+
+        /* Match Tracking */
+        .match-tracking {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-tracking h3 {
+            margin: 0 0 16px 0;
+            color: #1e3c72;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .match-tracking h3 i {
+            color: #27ae60;
+        }
+
+        .tracking-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+
+        .tracking-stat {
+            text-align: center;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .tracking-stat .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3c72;
+        }
+
+        .tracking-stat .stat-label {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+        }
+
+        /* Empty State */
+        .empty-squad {
+            text-align: center;
+            padding: 40px 20px;
+            color: #7f8c8d;
+        }
+
+        .empty-squad i {
+            font-size: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        .empty-squad p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e6ed;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <h2>Rwanda Talent</h2>
+            </div>
+            <nav>
+                <a href="dashboard.html"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="club.html"><i class="fas fa-users"></i> Club</a>
+                <a href="#" class="active"><i class="fas fa-futbol"></i> Match Day</a>
+                <a href="#" onclick="showSection('players')"><i class="fas fa-user-plus"></i> Players</a>
+                <a href="#" onclick="showSection('live-match')"><i class="fas fa-video"></i> Live Match</a>
+                <a href="school.html"><i class="fas fa-school"></i> School</a>
+                <a href="index.html" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header>
+                <button id="menuToggle" class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Match Day Management</h1>
+                <div class="user-info">
+                    <span id="userName">User</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- Match Page Content -->
+            <div class="match-page">
+                <!-- Left Column -->
+                <div class="match-content">
+                    <!-- Match Header Card -->
+                    <div class="match-header-card">
+                        <h2><i class="fas fa-calendar-alt"></i> Match Information</h2>
+                        <div class="match-datetime">
+                            <div class="match-datetime-field">
+                                <label>Match Day Name</label>
+                                <input type="text" id="matchDay" placeholder="e.g., Week 12 - Home Game">
+                            </div>
+                            <div class="match-datetime-field">
+                                <label>Match Date</label>
+                                <input type="date" id="matchDate">
+                            </div>
+                            <div class="match-datetime-field">
+                                <label>Match Time</label>
+                                <input type="time" id="matchTime">
+                            </div>
+                            <div class="match-datetime-field match-venue-field">
+                                <label><i class="fas fa-map-marker-alt"></i> Venue / Location</label>
+                                <select id="venueId" required onfocus="populateMatchDropdowns()">
+                                    <option value="">Select Venue...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Opponent Section -->
+                    <div class="opponent-section">
+                        <h3><i class="fas fa-flag"></i> Opponent Team</h3>
+                        <div class="opponent-form">
+                            <div class="form-group">
+                                <label>Team Name</label>
+                                <select id="matchOpponentId" required onfocus="populateMatchDropdowns()">
+                                    <option value="">Select Opponent...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>League / Competition</label>
+                                <select id="opponentLeague">
+                                    <option value="">Select League</option>
+                                    <option value="primus">Primus League</option>
+                                    <option value="peace">Peace Cup</option>
+                                    <option value="federation">Federation Cup</option>
+                                    <option value="regional">Regional Championship</option>
+                                    <option value="friendly">Friendly</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Previous Result</label>
+                                <select id="previousResult">
+                                    <option value="">Select</option>
+                                    <option value="win">Win</option>
+                                    <option value="draw">Draw</option>
+                                    <option value="loss">Loss</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Squad Selection -->
+                    <div class="squad-section">
+                        <!-- Available Players -->
+                        <div class="squad-column players">
+                            <h3><i class="fas fa-users"></i> Available Players</h3>
+                            <div class="player-count" id="availableCount">
+                                Select players: 0/18
+                            </div>
+                            <div class="player-list" id="availablePlayers">
+                                <div class="empty-squad">
+                                    <i class="fas fa-user-plus"></i>
+                                    <p>Click "Add Players" to select squad</p>
+                                </div>
+                            </div>
+                            <button class="add-player-btn" onclick="openPlayerSelector()">
+                                <i class="fas fa-plus"></i> Add Players
+                            </button>
+                        </div>
+
+                        <!-- Starting XI -->
+                        <div class="squad-column starting">
+                            <h3><i class="fas fa-play"></i> Starting XI</h3>
+                            <div class="player-count valid" id="startingCount">
+                                0/11 Selected
+                            </div>
+                            <div class="player-list" id="startingPlayers">
+                                <div class="empty-squad">
+                                    <i class="fas fa-futbol"></i>
+                                    <p>Drag players here or click switch</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Substitutes -->
+                        <div class="squad-column bench">
+                            <h3><i class="fas fa-bench"></i> Substitutes</h3>
+                            <div class="player-count" id="benchCount">
+                                0/7 Selected
+                            </div>
+                            <div class="player-list" id="benchPlayers">
+                                <div class="empty-squad">
+                                    <i class="fas fa-user-clock"></i>
+                                    <p>Remaining players go here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Match Tracking & AI Analytics -->
+                    <div class="match-tracking">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <h3><i class="fas fa-chart-line"></i> Match Statistics</h3>
+                            <button class="btn btn-primary btn-sm" onclick="openMatchReport()">
+                                <i class="fas fa-robot"></i> View AI Analysis Report
+                            </button>
+                        </div>
+                        <div class="tracking-stats">
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="totalMatches">0</div>
+                                <div class="stat-label">Total Matches</div>
+                            </div>
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="wins">0</div>
+                                <div class="stat-label">Wins</div>
+                            </div>
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="draws">0</div>
+                                <div class="stat-label">Draws</div>
+                            </div>
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="losses">0</div>
+                                <div class="stat-label">Losses</div>
+                            </div>
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="goalsFor">0</div>
+                                <div class="stat-label">Goals For</div>
+                            </div>
+                            <div class="tracking-stat">
+                                <div class="stat-value" id="goalsAgainst">0</div>
+                                <div class="stat-label">Goals Against</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Link Generation -->
+                    <div class="link-generation">
+                        <h3><i class="fas fa-link"></i> Generate Match Link</h3>
+                        <div class="generated-link">
+                            <input type="text" id="generatedLink" readonly placeholder="Click Generate to create shareable link">
+                            <button class="copy-btn" onclick="copyLink()">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                        </div>
+                        <div class="share-options">
+                            <button class="share-btn whatsapp" onclick="shareWhatsApp()">
+                                <i class="fab fa-whatsapp"></i> WhatsApp
+                            </button>
+                            <button class="share-btn twitter" onclick="shareTwitter()">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </button>
+                            <button class="share-btn email" onclick="shareEmail()">
+                                <i class="fas fa-envelope"></i> Email
+                            </button>
+                        </div>
+                        <div class="form-actions">
+                            <button class="btn btn-save" onclick="saveMatch()">
+                                <i class="fas fa-save"></i> Save Match
+                            </button>
+                            <button class="btn btn-generate" onclick="generateLink()">
+                                <i class="fas fa-link"></i> Generate Link
+                            </button>
+                            <button class="btn btn-share" onclick="shareMatch()">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                            <button class="btn btn-reset" onclick="resetMatch()">
+                                <i class="fas fa-redo"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column - AI Chat -->
+                <div class="ai-chat-section">
+                    <h3><i class="fas fa-robot"></i> AI Match Assistant</h3>
+                    <div class="ai-status online">
+                        <span class="dot"></span>
+                        <span>AI Assistant Online</span>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message ai">
+                            <div class="message-content">Hello! I'm your AI match assistant. I can help you with:</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                        <div class="chat-message ai">
+                            <div class="message-content">• Player selection recommendations<br>• Opponent analysis<br>• Match strategy suggestions<br>• Tactical formations</div>
+                            <div class="message-time">Just now</div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Ask about players, tactics...">
+                        <button onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Match Report Modal (The Statistics Tool) -->
+    <div class="modal-overlay" id="matchReportModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-invoice"></i> AI Match Analytics Report</h3>
+                <button class="modal-close" onclick="closeMatchReport()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Team Overview Card -->
+                <div class="card bg-dark-soft mb-4 py-3 px-4 border-left-primary">
+                    <div class="row align-items-center">
+                        <div class="col-md-3 text-center border-right">
+                            <div class="text-muted small uppercase mb-1">Team Intensity</div>
+                            <div class="h2 mb-0" id="teamQuality">0%</div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="row text-center">
+                                <div class="col-3">
+                                    <div class="text-muted small">Distance</div>
+                                    <div class="font-weight-bold" id="teamDistance">0 km</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="text-muted small">Avg Speed</div>
+                                    <div class="font-weight-bold" id="teamAvgSpeed">0 km/h</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="text-muted small">Top Speed</div>
+                                    <div class="font-weight-bold" id="teamTopSpeed">0 km/h</div>
+                                </div>
+                                <div class="col-3">
+                                    <div class="text-muted small">Sprints</div>
+                                    <div class="font-weight-bold" id="teamSprints">0</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Player Rankings -->
+                <div class="player-rankings">
+                    <h4 class="mb-3">Individual Player Performance</h4>
+                    <div class="table-responsive">
+                        <table class="table table-dark table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Player</th>
+                                    <th>Pos</th>
+                                    <th>Distance</th>
+                                    <th>Top Speed</th>
+                                    <th>Sprints</th>
+                                    <th>AI Grade</th>
+                                </tr>
+                            </thead>
+                            <tbody id="playerReportBody">
+                                <!-- Populated via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeMatchReport()">Close Report</button>
+                <button class="btn btn-primary" onclick="window.print()">
+                    <i class="fas fa-print"></i> Export to PDF
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Selector Modal -->
+    <div class="modal" id="playerSelectorModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Select Players for Squad</h3>
+                <button class="modal-close" onclick="closePlayerSelector()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <input type="text" id="playerSearch" placeholder="Search players..." onkeyup="filterPlayers()">
+                </div>
+                <div class="player-list" id="playerSelectorList"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePlayerSelector()">Cancel</button>
+                <button class="btn btn-primary" onclick="addSelectedPlayers()">Add Selected</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Initialize match page
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof loadMatchPage === 'function') loadMatchPage();
+        });
+
+        // Generate shareable match link
+        function generateLink() {
+            const matchId = document.getElementById('matchId')?.value || Date.now();
+            const matchUrl = `${window.location.origin}/match.html?id=${matchId}`;
+            document.getElementById('generatedLink').value = matchUrl;
+            showToast('Match link generated', 'success');
+        }
+
+        // Copy link to clipboard
+        function copyLink() {
+            const linkInput = document.getElementById('generatedLink');
+            if (linkInput && linkInput.value) {
+                navigator.clipboard.writeText(linkInput.value).then(() => {
+                    showToast('Link copied to clipboard', 'success');
+                }).catch(() => {
+                    linkInput.select();
+                    document.execCommand('copy');
+                    showToast('Link copied', 'success');
+                });
+            } else {
+                showToast('Generate a link first', 'warning');
+            }
+        }
+
+        // Share via WhatsApp
+        function shareWhatsApp() {
+            const link = document.getElementById('generatedLink')?.value || window.location.href;
+            const matchDay = document.getElementById('matchDay')?.value || 'Match Day';
+            const text = encodeURIComponent(`Match Day: ${matchDay}\n${link}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        // Share via Twitter
+        function shareTwitter() {
+            const link = document.getElementById('generatedLink')?.value || window.location.href;
+            const matchDay = document.getElementById('matchDay')?.value || 'Match Day';
+            const text = encodeURIComponent(`Match Day: ${matchDay} - Rwanda Talent`);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(link)}`, '_blank');
+        }
+
+        // Share via Email
+        function shareEmail() {
+            const link = document.getElementById('generatedLink')?.value || window.location.href;
+            const matchDay = document.getElementById('matchDay')?.value || 'Match Day';
+            const subject = encodeURIComponent(`Match Day: ${matchDay} - Rwanda Talent`);
+            const body = encodeURIComponent(`Match Details:\n${matchDay}\n\nView: ${link}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // Share match
+        function shareMatch() {
+            const link = document.getElementById('generatedLink')?.value;
+            if (!link) {
+                generateLink();
+            }
+            showToast('Use the share buttons below to share the link', 'info');
+        }
+
+        // Reset match form
+        function resetMatch() {
+            if (!confirm('Reset all match data?')) return;
+            
+            document.getElementById('matchDay').value = '';
+            document.getElementById('matchDate').value = '';
+            document.getElementById('matchTime').value = '';
+            document.getElementById('venueId').selectedIndex = 0;
+            document.getElementById('matchOpponentId').selectedIndex = 0;
+            document.getElementById('opponentLeague').selectedIndex = 0;
+            document.getElementById('previousResult').selectedIndex = 0;
+            document.getElementById('generatedLink').value = '';
+            
+            // Reset squad
+            matchSquadState = { available: [], starting: [], bench: [], selectedIds: new Set() };
+            renderMatchSquads();
+            
+            showToast('Match data reset', 'info');
+        }
+
+        // AI Chat
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input?.value?.trim();
+            if (!message) return;
+            
+            // Add user message
+            const chatMessages = document.getElementById('chatMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `
+                <div class="message-content">${escapeHtml(message)}</div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const aiResponses = [
+                    'Based on your squad, I recommend a 4-3-3 formation.',
+                    'Your strongest defenders should start. Consider rotating midfield.',
+                    'The opponent favors counter-attacks. Position your full-backs cautiously.',
+                    'Your top scorer has a 70% chance of scoring based on recent form.',
+                    'Consider starting your fastest forward against their slow defense.',
+                    'Goalkeeper should play deeper against this opponent.'
+                ];
+                const response = aiResponses[Math.floor(Math.random() * aiResponses.length)];
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'chat-message ai';
+                aiMsg.innerHTML = `
+                    <div class="message-content">${response}</div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                `;
+                chatMessages.appendChild(aiMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        // Enter key to send chat
+        document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Filter players in selector modal
+        function filterPlayers() {
+            const search = document.getElementById('playerSearch')?.value?.toLowerCase() || '';
+            document.querySelectorAll('#playerSelectorList .player-item').forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+
+        // Mobile menu toggle
+        document.getElementById('menuToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar')?.classList.toggle('active');
+        });
+
+        // Utility function (fallback if not in main.js)
+        function escapeHtml(str) {
+            if (!str) return '';
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+    </script>
+    
+</body>
+</html>

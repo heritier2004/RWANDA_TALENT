@@ -7,24 +7,64 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 import mysql.connector
 from datetime import datetime, timedelta
+from database import get_db_connection
 
 stats_bp = Blueprint('stats', __name__)
-
-# Database configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'football_dashboard',
-    'charset': 'utf8mb4'
-}
 
 # Auto-update interval in minutes
 LIVE_UPDATE_INTERVAL = 15
 
-def get_db_connection():
-    """Create database connection"""
-    return mysql.connector.connect(**DB_CONFIG)
+# Removed local DB_CONFIG - now using centralized database.py
+
+
+@stats_bp.route('/overview', methods=['GET'])
+@jwt_required()
+def get_stats_overview():
+    """Get overall statistics overview"""
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Consolidate into a single query for better performance
+        cursor.execute("""
+            SELECT 
+                COALESCE(SUM(goals), 0) as total_goals,
+                COALESCE(SUM(assists), 0) as total_assists,
+                COALESCE(SUM(minutes_played), 0) as total_minutes,
+                COALESCE(AVG(performance_score), 0) as avg_performance
+            FROM statistics
+        """)
+        stats = cursor.fetchone()
+        
+        # Get user count
+        cursor.execute("SELECT COUNT(*) as count FROM users")
+        user_count = cursor.fetchone()['count']
+        
+        # Get database size in MB
+        cursor.execute("""
+            SELECT SUM(data_length + index_length) / 1024 / 1024 AS size 
+            FROM information_schema.TABLES 
+            WHERE table_schema = 'football_dashboard'
+        """)
+        db_size_row = cursor.fetchone()
+        db_size = round(float(db_size_row['size'] or 0), 2)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify({
+            'total_goals': stats['total_goals'],
+            'total_assists': stats['total_assists'],
+            'total_minutes': stats['total_minutes'],
+            'avg_performance': round(float(stats['avg_performance']), 1),
+            'users': user_count,
+            'db_size': db_size
+        }), 200
+        
+    except Exception as e:
+        print(f"Error getting stats overview: {e}")
+        return jsonify({'error': 'Failed to load statistics'}), 500
+
 
 @stats_bp.route('/player/<int:player_id>', methods=['GET'])
 @jwt_required()
@@ -45,11 +85,11 @@ def get_player_stats(player_id):
         cursor.execute("""
             SELECT 
                 COUNT(*) as total_matches,
-                SUM(goals) as total_goals,
-                SUM(assists) as total_assists,
-                SUM(minutes_played) as total_minutes,
-                SUM(yellow_cards) as yellow_cards,
-                SUM(red_cards) as red_cards
+                COALESCE(SUM(goals), 0) as total_goals,
+                COALESCE(SUM(assists), 0) as total_assists,
+                COALESCE(SUM(minutes_played), 0) as total_minutes,
+                COALESCE(SUM(yellow_cards), 0) as yellow_cards,
+                COALESCE(SUM(red_cards), 0) as red_cards
             FROM statistics 
             WHERE player_id = %s
         """, (player_id,))
@@ -97,6 +137,7 @@ def get_top_scorers():
         
         limit = request.args.get('limit', 10, type=int)
         
+        # Use different aliases to avoid conflict: sch=schools, acd=academies, clb=clubs
         cursor.execute("""
             SELECT 
                 p.id,
@@ -104,21 +145,21 @@ def get_top_scorers():
                 p.position,
                 p.photo_url,
                 p.nationality,
-                SUM(s.goals) as total_goals,
-                COUNT(s.id) as matches_played,
+                COALESCE(SUM(s.goals), 0) as goals,
+                COALESCE(SUM(s.assists), 0) as assists,
+                COUNT(s.id) as matches,
                 CASE 
-                    WHEN p.school_id IS NOT NULL THEN s.name
-                    WHEN p.academy_id IS NOT NULL THEN a.name
-                    WHEN p.club_id IS NOT NULL THEN c.name
+                    WHEN p.school_id IS NOT NULL THEN sch.name
+                    WHEN p.academy_id IS NOT NULL THEN acd.name
+                    WHEN p.club_id IS NOT NULL THEN clb.name
                 END as entity_name
             FROM players p
             LEFT JOIN statistics s ON p.id = s.player_id
-            LEFT JOIN schools s ON p.school_id = s.id
-            LEFT JOIN academies a ON p.academy_id = a.id
-            LEFT JOIN clubs c ON p.club_id = c.id
+            LEFT JOIN schools sch ON p.school_id = sch.id
+            LEFT JOIN academies acd ON p.academy_id = acd.id
+            LEFT JOIN clubs clb ON p.club_id = clb.id
             GROUP BY p.id
-            HAVING total_goals > 0
-            ORDER BY total_goals DESC
+            ORDER BY goals DESC, assists DESC
             LIMIT %s
         """, (limit,))
         
@@ -353,31 +394,72 @@ def get_entity_stats(entity_type, entity_id):
         if entity_type not in valid_entities:
             return jsonify({'error': 'Invalid entity type'}), 400
         
-        # Get entity players
-        id_field = f"{entity_type}_id"
-        cursor.execute(f"SELECT id, name FROM {entity_type}s WHERE id = %s", (entity_id,))
+        # Use column mapping to avoid f-string SQL injection pattern
+        # Validated at line 382, but avoid f-strings for SQL tables/columns
+        column_map = {'school': 'school_id', 'academy': 'academy_id', 'club': 'club_id'}
+        id_field = column_map.get(entity_type)
+        
+        cursor.execute(f"SELECT id, name FROM {entity_type} WHERE id = %s", (entity_id,))
         entity = cursor.fetchone()
         
         if not entity:
             return jsonify({'error': 'Entity not found'}), 404
         
-        # Get player statistics for this entity
-        cursor.execute(f"""
-            SELECT 
-                p.id,
-                p.name,
-                p.position,
-                p.jersey_number,
-                SUM(s.goals) as total_goals,
-                SUM(s.assists) as total_assists,
-                SUM(s.minutes_played) as total_minutes,
-                COUNT(DISTINCT s.match_id) as matches_played
-            FROM players p
-            LEFT JOIN statistics s ON p.id = s.player_id
-            WHERE p.{id_field} = %s
-            GROUP BY p.id
-            ORDER BY total_goals DESC
-        """, (entity_id,))
+        # Build query with validated column - use separate queries per entity type
+        # This avoids dynamic SQL column names while maintaining correctness
+        if entity_type == 'school':
+            player_query = """
+                SELECT 
+                    p.id,
+                    p.name,
+                    p.position,
+                    p.jersey_number,
+                    COALESCE(SUM(s.goals), 0) as total_goals,
+                    COALESCE(SUM(s.assists), 0) as total_assists,
+                    COALESCE(SUM(s.minutes_played), 0) as total_minutes,
+                    COUNT(DISTINCT s.match_id) as matches_played
+                FROM players p
+                LEFT JOIN statistics s ON p.id = s.player_id
+                WHERE p.school_id = %s
+                GROUP BY p.id
+                ORDER BY total_goals DESC
+            """
+        elif entity_type == 'academy':
+            player_query = """
+                SELECT 
+                    p.id,
+                    p.name,
+                    p.position,
+                    p.jersey_number,
+                    COALESCE(SUM(s.goals), 0) as total_goals,
+                    COALESCE(SUM(s.assists), 0) as total_assists,
+                    COALESCE(SUM(s.minutes_played), 0) as total_minutes,
+                    COUNT(DISTINCT s.match_id) as matches_played
+                FROM players p
+                LEFT JOIN statistics s ON p.id = s.player_id
+                WHERE p.academy_id = %s
+                GROUP BY p.id
+                ORDER BY total_goals DESC
+            """
+        else:  # club
+            player_query = """
+                SELECT 
+                    p.id,
+                    p.name,
+                    p.position,
+                    p.jersey_number,
+                    COALESCE(SUM(s.goals), 0) as total_goals,
+                    COALESCE(SUM(s.assists), 0) as total_assists,
+                    COALESCE(SUM(s.minutes_played), 0) as total_minutes,
+                    COUNT(DISTINCT s.match_id) as matches_played
+                FROM players p
+                LEFT JOIN statistics s ON p.id = s.player_id
+                WHERE p.club_id = %s
+                GROUP BY p.id
+                ORDER BY total_goals DESC
+            """
+        
+        cursor.execute(player_query, (entity_id,))
         
         player_stats = cursor.fetchall()
         

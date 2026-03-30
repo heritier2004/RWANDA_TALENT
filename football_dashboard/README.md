@@ -100,6 +100,9 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # Install dependencies
 pip install flask flask-cors flask-jwt-extended flask-bcrypt mysql-connector-python
 
+# Install AI/ML dependencies (optional - for player tracking)
+pip install ultralytics opencv-python bytetrack numpy
+
 # Configure database connection in app.py
 # Update DB_CONFIG with your MySQL credentials
 

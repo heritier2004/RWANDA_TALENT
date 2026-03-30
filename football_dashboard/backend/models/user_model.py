@@ -5,19 +5,7 @@ Database operations for users
 
 import mysql.connector
 from datetime import datetime
-
-# Database configuration
-DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'football_dashboard',
-    'charset': 'utf8mb4'
-}
-
-def get_db_connection():
-    """Create database connection"""
-    return mysql.connector.connect(**DB_CONFIG)
+from database import get_db_connection
 
 def get_user_by_id(user_id):
     """Get user by ID"""
@@ -135,7 +123,10 @@ def update_user(user_id, data):
         update_fields = []
         values = []
         
-        for field in ['username', 'email', 'role', 'entity_id']:
+        # Use explicit allowlist to prevent SQL injection
+        allowed_fields = {'username', 'email', 'role', 'entity_id'}
+        
+        for field in allowed_fields:
             if field in data:
                 update_fields.append(f"{field} = %s")
                 values.append(data[field])

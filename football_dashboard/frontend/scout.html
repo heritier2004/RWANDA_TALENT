@@ -6,6 +6,7 @@
     <title>Scout Dashboard - Football Academy Management</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
     <div class="dashboard-wrapper">
@@ -20,10 +21,10 @@
             
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="active"><a href="scout.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#talent"><i class="fas fa-star"></i> Find Talent</a></li>
-                    <li><a href="#reports"><i class="fas fa-file-alt"></i> Reports</a></li>
-                    <li><a href="#favorites"><i class="fas fa-heart"></i> Favorites</a></li>
+                    <li class="active"><a href="#" onclick="handleMenuClick(this, 'dashboard')"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'talent')"><i class="fas fa-star"></i> Find Talent</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'reports')"><i class="fas fa-file-alt"></i> Reports</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'favorites')"><i class="fas fa-heart"></i> Favorites</a></li>
                 </ul>
             </nav>
             
@@ -51,146 +52,569 @@
                 </button>
                 <h1 class="page-title">Talent Scout Dashboard</h1>
                 <div class="header-actions">
-                    <div class="scout-badge">
+                    <button class="btn btn-primary" onclick="generateScoutPDF()">
+                        <i class="fas fa-file-pdf"></i> Generate PDF Report
+                    </button>
+                    <div class="scout-badge" style="margin-left: 15px;">
                         <i class="fas fa-search"></i> Talent Scout
                     </div>
                 </div>
             </header>
             
             <div class="dashboard-content">
-                <!-- Scout Stats -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-users"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Players Viewed</h3>
-                            <p class="stat-number" id="playersViewed">0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon active">
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Favorites</h3>
-                            <p class="stat-number" id="favorites">0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon success">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Reports</h3>
-                            <p class="stat-number" id="reports">0</p>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon warning">
-                            <i class="fas fa-calendar"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>Matches Attended</h3>
-                            <p class="stat-number" id="matchesAttended">0</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Talent Search -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-search"></i> Find Talent</h3>
-                    </div>
-                    <div class="card-body">
-                        <div class="search-filters">
-                            <div class="filter-group">
-                                <label>Position</label>
-                                <select id="filterPosition">
-                                    <option value="">All Positions</option>
-                                    <option value="Goalkeeper">Goalkeeper</option>
-                                    <option value="Defender">Defender</option>
-                                    <option value="Midfielder">Midfielder</option>
-                                    <option value="Forward">Forward</option>
-                                </select>
+                <!-- ================= DASHBOARD ================= -->
+                <section id="dashboard" class="section active">
+                    <!-- Scout Stats -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
                             </div>
-                            <div class="filter-group">
-                                <label>Nationality</label>
-                                <select id="filterNationality">
-                                    <option value="">All</option>
-                                    <option value="Rwandan">Rwandan</option>
-                                    <option value="Kenyan">Kenyan</option>
-                                    <option value="Ugandan">Ugandan</option>
-                                </select>
+                            <div class="stat-info">
+                                <h3>Players Viewed</h3>
+                                <p class="stat-number" id="playersViewed">0</p>
                             </div>
-                            <div class="filter-group">
-                                <label>Age Range</label>
-                                <select id="filterAge">
-                                    <option value="">All Ages</option>
-                                    <option value="15-18">15-18</option>
-                                    <option value="18-21">18-21</option>
-                                    <option value="21-25">21-25</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-primary" onclick="searchPlayers()">
-                                <i class="fas fa-search"></i> Search
-                            </button>
                         </div>
                         
-                        <div class="table-responsive">
-                            <table class="data-table" id="talentTable">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Position</th>
-                                        <th>Age</th>
-                                        <th>Nationality</th>
-                                        <th>Entity</th>
-                                        <th>Goals</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="talentTableBody"></tbody>
-                            </table>
+                        <div class="stat-card">
+                            <div class="stat-icon active">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Favorites</h3>
+                                <p class="stat-number" id="favorites">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon success">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Total Players</h3>
+                                <p class="stat-number" id="scoutTotalPlayers">0</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card">
+                            <div class="stat-icon warning">
+                                <i class="fas fa-calendar"></i>
+                            </div>
+                            <div class="stat-info">
+                                <h3>Matches Attended</h3>
+                                <p class="stat-number" id="matchesAttended">0</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <!-- Top Performers -->
-                <div class="content-grid">
-                    <div class="card">
+
+                    <!-- Top Performers & Charts -->
+                    <div class="content-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-trophy"></i> Top Scorers</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="topScorers">
+                                    <p class="empty-state">Loading top scorers...</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-header">
+                                <h3><i class="fas fa-medal"></i> Top Assists</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="topAssists">
+                                    <p class="empty-state">Loading top assists...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card" style="margin-top: 24px;">
                         <div class="card-header">
-                            <h3><i class="fas fa-trophy"></i> Top Scorers</h3>
+                            <h3><i class="fas fa-chart-bar"></i> Position Distribution</h3>
                         </div>
                         <div class="card-body">
-                            <div class="top-performers" id="topScorers"></div>
+                            <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+                                <div class="stat-card" style="text-align: center;">
+                                    <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                                    <div class="stat-info">
+                                        <h3>Goalkeepers</h3>
+                                        <div class="value" id="gkCount">0</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="text-align: center;">
+                                    <div class="stat-icon success"><i class="fas fa-user-shield"></i></div>
+                                    <div class="stat-info">
+                                        <h3>Defenders</h3>
+                                        <div class="value" id="defCount">0</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="text-align: center;">
+                                    <div class="stat-icon warning"><i class="fas fa-cogs"></i></div>
+                                    <div class="stat-info">
+                                        <h3>Midfielders</h3>
+                                        <div class="value" id="midCount">0</div>
+                                    </div>
+                                </div>
+                                <div class="stat-card" style="text-align: center;">
+                                    <div class="stat-icon active"><i class="fas fa-running"></i></div>
+                                    <div class="stat-info">
+                                        <h3>Forwards</h3>
+                                        <div class="value" id="fwdCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    
+                </section>
+
+                <!-- ================= FIND TALENT ================= -->
+                <section id="talent" class="section" style="display:none;">
                     <div class="card">
                         <div class="card-header">
-                            <h3><i class="fas fa-star"></i> Top Assists</h3>
+                            <h3><i class="fas fa-search"></i> Find Talent</h3>
+                            <button class="btn btn-secondary" onclick="loadAllScoutPlayers()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
                         </div>
                         <div class="card-body">
-                            <div class="top-performers" id="topAssists"></div>
+                            <div style="display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap;">
+                                <div class="form-group" style="flex: 1; min-width: 150px;">
+                                    <label>Position</label>
+                                    <select id="scoutFilterPosition" onchange="filterScoutPlayers()" style="width: 100%; padding: 10px;">
+                                        <option value="">All Positions</option>
+                                        <option value="Goalkeeper">Goalkeeper</option>
+                                        <option value="Defender">Defender</option>
+                                        <option value="Midfielder">Midfielder</option>
+                                        <option value="Forward">Forward</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 1; min-width: 150px;">
+                                    <label>Nationality</label>
+                                    <select id="scoutFilterNationality" onchange="filterScoutPlayers()" style="width: 100%; padding: 10px;">
+                                        <option value="">All</option>
+                                        <option value="Rwandan">Rwandan</option>
+                                        <option value="Kenyan">Kenyan</option>
+                                        <option value="Ugandan">Ugandan</option>
+                                        <option value="Tanzanian">Tanzanian</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex: 2; min-width: 200px;">
+                                    <label>Search Name</label>
+                                    <div style="display: flex; gap: 8px;">
+                                        <input type="text" id="scoutSearchName" placeholder="Search by name..." onkeyup="filterScoutPlayers()" style="flex: 1; padding: 10px;">
+                                        <button class="btn btn-primary" onclick="filterScoutPlayers()">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Reg. #</th>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Age</th>
+                                            <th>Nationality</th>
+                                            <th>Entity</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="talentTableBody">
+                                        <tr><td colspan="7" class="empty-state">Loading players...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </section>
+
+                <!-- ================= REPORTS ================= -->
+                <section id="reports" class="section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-file-alt"></i> Scout Reports</h3>
+                            <button class="btn btn-primary" onclick="generateScoutPDF()">
+                                <i class="fas fa-file-pdf"></i> Export All as PDF
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="scoutReportsList">
+                                <div class="empty-state" style="padding: 40px; text-align: center;">
+                                    <i class="fas fa-file-alt fa-3x" style="opacity: 0.3; margin-bottom: 16px;"></i>
+                                    <h3>No Reports Generated</h3>
+                                    <p>View player profiles and mark favorites to generate scouting reports.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ================= FAVORITES ================= -->
+                <section id="favorites" class="section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-heart"></i> Favorite Players</h3>
+                            <button class="btn btn-secondary" onclick="loadFavorites()">
+                                <i class="fas fa-sync"></i> Refresh
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Reg. #</th>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Age</th>
+                                            <th>Entity</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="favoritesTableBody">
+                                        <tr><td colspan="6" class="empty-state">No favorites yet. Browse players and add them.</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
     </div>
-    
+
+    <!-- Player Detail Modal -->
+    <div class="modal-overlay" id="playerDetailModal">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="playerDetailTitle">Player Profile</h3>
+                <button class="modal-close" onclick="closePlayerDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="playerDetailContent">
+                <!-- Populated dynamically -->
+            </div>
+            <div class="form-actions">
+                <button class="btn btn-secondary" onclick="closePlayerDetailModal()">Close</button>
+                <button class="btn btn-primary" id="addToFavoritesBtn">
+                    <i class="fas fa-heart"></i> Add to Favorites
+                </button>
+                <button class="btn btn-primary" onclick="generateScoutPDF()">
+                    <i class="fas fa-file-pdf"></i> Export Report
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
+        // Sidebar navigation handler
+        function handleMenuClick(el, sectionId) {
+            document.querySelectorAll('.sidebar-nav a').forEach(a => a.parentElement.classList.remove('active'));
+            el.parentElement.classList.add('active');
+            showSection(sectionId);
+        }
+
+        // Initialize scout dashboard on load
         document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
-            loadTopPerformers();
-            loadAllPlayers();
+            loadScoutDashboard();
         });
+
+        // Load scout dashboard stats
+        async function loadScoutDashboard() {
+            try {
+                const data = await apiRequest('/players');
+                const players = data.players || data || [];
+                
+                updateStat('playersViewed', players.length);
+                updateStat('scoutTotalPlayers', players.length);
+                updateStat('favorites', getFavorites().length);
+                
+                // Position counts
+                const gk = players.filter(p => p.position === 'Goalkeeper').length;
+                const def = players.filter(p => p.position === 'Defender').length;
+                const mid = players.filter(p => p.position === 'Midfielder').length;
+                const fwd = players.filter(p => p.position === 'Forward').length;
+                
+                updateStat('gkCount', gk);
+                updateStat('defCount', def);
+                updateStat('midCount', mid);
+                updateStat('fwdCount', fwd);
+                
+                // Load top scorers
+                loadTopPerformers();
+                
+                // Load talent table
+                populateTalentTable(players);
+            } catch (e) {
+                console.error('Scout dashboard load failed:', e);
+            }
+        }
+
+        function updateStat(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        // Load all players for talent search
+        async function loadAllScoutPlayers() {
+            try {
+                const data = await apiRequest('/players');
+                const players = data.players || data || [];
+                populateTalentTable(players);
+            } catch (e) {
+                console.error('Failed to load players:', e);
+            }
+        }
+
+        function populateTalentTable(players) {
+            const tbody = document.getElementById('talentTableBody');
+            if (!tbody) return;
+            
+            if (players.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No players found</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = players.map(p => {
+                const age = p.dob ? calculateAge(p.dob) : 'N/A';
+                return `
+                <tr>
+                    <td>${p.registration_number || 'N/A'}</td>
+                    <td><strong>${escapeHtml(p.name)}</strong></td>
+                    <td><span class="badge">${p.position || 'N/A'}</span></td>
+                    <td>${age}</td>
+                    <td>${escapeHtml(p.nationality || 'N/A')}</td>
+                    <td>${escapeHtml(p.entity_name || p.school_name || p.academy_name || p.club_name || 'N/A')}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="viewScoutPlayer(${p.id})" title="View Profile">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="toggleFavorite(${p.id})" title="Add to Favorites">
+                            <i class="fas fa-heart ${isFavorite(p.id) ? 'text-danger' : ''}"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function calculateAge(dob) {
+            const birthDate = new Date(dob);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) age--;
+            return age;
+        }
+
+        // Filter players in talent search
+        function filterScoutPlayers() {
+            const position = document.getElementById('scoutFilterPosition')?.value?.toLowerCase() || '';
+            const nationality = document.getElementById('scoutFilterNationality')?.value?.toLowerCase() || '';
+            const searchName = document.getElementById('scoutSearchName')?.value?.toLowerCase() || '';
+            
+            document.querySelectorAll('#talentTableBody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matchesPosition = !position || text.includes(position);
+                const matchesNationality = !nationality || text.includes(nationality);
+                const matchesName = !searchName || text.includes(searchName);
+                
+                row.style.display = matchesPosition && matchesNationality && matchesName ? '' : 'none';
+            });
+        }
+
+        // View player profile
+        async function viewScoutPlayer(id) {
+            try {
+                const data = await apiRequest(`/stats/player/${id}`);
+                const player = data.player || {};
+                const stats = data.total_stats || {};
+                
+                document.getElementById('playerDetailTitle').textContent = player.name || 'Player Profile';
+                
+                document.getElementById('playerDetailContent').innerHTML = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                        <div>
+                            <h4 style="margin-bottom: 16px; color: var(--primary);">Personal Information</h4>
+                            <p><strong>Registration:</strong> ${player.registration_number || 'N/A'}</p>
+                            <p><strong>Position:</strong> ${player.position || 'N/A'}</p>
+                            <p><strong>Nationality:</strong> ${player.nationality || 'N/A'}</p>
+                            <p><strong>DOB:</strong> ${player.dob ? formatDate(player.dob).split(',')[0] : 'N/A'}</p>
+                            <p><strong>Jersey:</strong> #${player.jersey_number || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <h4 style="margin-bottom: 16px; color: var(--primary);">Career Statistics</h4>
+                            <p><strong>Matches:</strong> ${stats.total_matches || 0}</p>
+                            <p><strong>Goals:</strong> ${stats.total_goals || 0}</p>
+                            <p><strong>Assists:</strong> ${stats.total_assists || 0}</p>
+                            <p><strong>Minutes:</strong> ${stats.total_minutes || 0}</p>
+                            <p><strong>Yellow Cards:</strong> ${stats.yellow_cards || 0}</p>
+                            <p><strong>Red Cards:</strong> ${stats.red_cards || 0}</p>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('addToFavoritesBtn').onclick = () => toggleFavorite(id);
+                document.getElementById('playerDetailModal').classList.add('active');
+                
+                // Track viewed player
+                addViewedPlayer(id);
+            } catch (e) {
+                showToast('Failed to load player profile', 'error');
+            }
+        }
+
+        function closePlayerDetailModal() {
+            document.getElementById('playerDetailModal').classList.remove('active');
+        }
+
+        // Load top performers
+        async function loadTopPerformers() {
+            try {
+                const data = await apiRequest('/stats/top-scorers?limit=5');
+                const scorers = data.players || data || [];
+                
+                const topScorersEl = document.getElementById('topScorers');
+                if (topScorersEl) {
+                    topScorersEl.innerHTML = scorers.length > 0 
+                        ? scorers.map((p, i) => `
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-bottom: 1px solid #eee;">
+                                <span style="font-weight: bold; color: ${i < 3 ? '#ffd700' : '#666'}; font-size: 18px;">#${i + 1}</span>
+                                <div style="flex: 1;">
+                                    <strong>${escapeHtml(p.name)}</strong>
+                                    <div style="font-size: 12px; color: #666;">${p.position || 'N/A'}</div>
+                                </div>
+                                <span style="font-weight: bold; color: var(--primary);">${p.goals || 0} goals</span>
+                            </div>
+                        `).join('')
+                        : '<p class="empty-state">No scoring data available</p>';
+                }
+            } catch (e) {
+                console.error('Top performers load failed:', e);
+            }
+        }
+
+        // Favorites management (localStorage based)
+        function getFavorites() {
+            return JSON.parse(localStorage.getItem('scoutFavorites') || '[]');
+        }
+
+        function isFavorite(playerId) {
+            return getFavorites().includes(playerId);
+        }
+
+        function toggleFavorite(playerId) {
+            let favs = getFavorites();
+            if (favs.includes(playerId)) {
+                favs = favs.filter(id => id !== playerId);
+                showToast('Removed from favorites', 'info');
+            } else {
+                favs.push(playerId);
+                showToast('Added to favorites', 'success');
+            }
+            localStorage.setItem('scoutFavorites', JSON.stringify(favs));
+            updateStat('favorites', favs.length);
+            loadFavorites();
+        }
+
+        async function loadFavorites() {
+            const favs = getFavorites();
+            const tbody = document.getElementById('favoritesTableBody');
+            if (!tbody) return;
+            
+            if (favs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No favorites yet. Browse players and add them.</td></tr>';
+                return;
+            }
+            
+            try {
+                const data = await apiRequest('/players');
+                const players = data.players || data || [];
+                const favPlayers = players.filter(p => favs.includes(p.id));
+                
+                tbody.innerHTML = favPlayers.map(p => {
+                    const age = p.dob ? calculateAge(p.dob) : 'N/A';
+                    return `
+                    <tr>
+                        <td>${p.registration_number || 'N/A'}</td>
+                        <td><strong>${escapeHtml(p.name)}</strong></td>
+                        <td><span class="badge">${p.position || 'N/A'}</span></td>
+                        <td>${age}</td>
+                        <td>${escapeHtml(p.entity_name || 'N/A')}</td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" onclick="viewScoutPlayer(${p.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" onclick="toggleFavorite(${p.id})">
+                                <i class="fas fa-heart-broken"></i>
+                            </button>
+                        </td>
+                    </tr>`;
+                }).join('');
+            } catch (e) {
+                tbody.innerHTML = '<tr><td colspan="6" class="error-state">Error loading favorites</td></tr>';
+            }
+        }
+
+        // Track viewed players
+        function getViewedPlayers() {
+            return JSON.parse(localStorage.getItem('scoutViewed') || '[]');
+        }
+
+        function addViewedPlayer(playerId) {
+            let viewed = getViewedPlayers();
+            if (!viewed.includes(playerId)) {
+                viewed.push(playerId);
+                localStorage.setItem('scoutViewed', JSON.stringify(viewed));
+            }
+        }
+
+        // Generate PDF report
+        function generateScoutPDF() {
+            showToast('Generating PDF report...', 'info');
+            
+            const element = document.createElement('div');
+            element.innerHTML = `
+                <div style="padding: 20px; font-family: Arial, sans-serif;">
+                    <h1 style="color: #1e3c72;">Scout Report - Rwanda Football</h1>
+                    <p>Generated: ${new Date().toLocaleString()}</p>
+                    <p>Total Players Viewed: ${getViewedPlayers().length}</p>
+                    <p>Favorites: ${getFavorites().length}</p>
+                    <hr>
+                    <h3>Favorite Players</h3>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: #1e3c72; color: white;">
+                            <th style="padding: 8px; border: 1px solid #ddd;">Name</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Position</th>
+                            <th style="padding: 8px; border: 1px solid #ddd;">Nationality</th>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 20px; color: #666;">End of Report</p>
+                </div>
+            `;
+            
+            if (typeof html2pdf !== 'undefined') {
+                html2pdf().set({
+                    margin: 10,
+                    filename: 'scout_report_' + Date.now() + '.pdf',
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                }).from(element).save();
+                showToast('PDF downloaded', 'success');
+            } else {
+                showToast('PDF library not loaded. Using print instead.', 'warning');
+                window.print();
+            }
+        }
     </script>
 </body>
 </html>

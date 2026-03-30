@@ -4,8 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FERWAFA Dashboard - Football Academy Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px 0; }
+        .league-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); transition: transform 0.2s; }
+        .league-card:hover { transform: translateY(-5px); }
+        .league-cat { font-size: 0.8rem; text-transform: uppercase; color: #666; font-weight: bold; }
+        .talent-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px 0; }
+        .talent-card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 15px rgba(0,0,0,0.1); position: relative; }
+        .talent-badge { position: absolute; top: 10px; right: 10px; background: gold; color: black; padding: 5px 10px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; }
+        .talent-info { padding: 15px; }
+        .talent-score { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .announcement-item { padding: 15px; border-bottom: 1px solid #eee; transition: background 0.2s; }
+        .announcement-item:hover { background: #f9f9f9; }
+        .ann-meta { font-size: 0.8rem; color: #888; margin-bottom: 5px; }
+        .ann-tag { padding: 2px 8px; border-radius: 10px; font-size: 0.7rem; color: white; margin-left: 10px; }
+        .tag-urgent { background: #ff4757; }
+        .tag-general { background: #2f3542; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 15px; width: 90%; max-width: 500px; }
+    </style>
 </head>
 <body>
     <div class="dashboard-wrapper">
@@ -21,13 +41,14 @@
             
             <nav class="sidebar-nav">
                 <ul>
-                    <li class="active"><a href="ferwafa.html"><i class="fas fa-home"></i> Dashboard</a></li>
-                    <li><a href="#overview"><i class="fas fa-chart-pie"></i> Overview</a></li>
-                    <li><a href="#clubs"><i class="fas fa-shield-alt"></i> Clubs</a></li>
-                    <li><a href="#academies"><i class="fas fa-graduation-cap"></i> Academies</a></li>
-                    <li><a href="#players"><i class="fas fa-users"></i> All Players</a></li>
-                    <li><a href="#matches"><i class="fas fa-futbol"></i> Matches</a></li>
-                    <li><a href="#statistics"><i class="fas fa-chart-bar"></i> Statistics</a></li>
+                    <li class="active"><a href="#" onclick="handleMenuClick(this, 'dashboard')"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'players')"><i class="fas fa-users"></i> All Players</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'leaguesSection')"><i class="fas fa-trophy"></i> Leagues</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'newsSection')"><i class="fas fa-bullhorn"></i> National News</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'statisticsSection')"><i class="fas fa-star"></i> Talent Hub</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'matchesSection')"><i class="fas fa-futbol"></i> Matches</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'statistics')"><i class="fas fa-chart-bar"></i> AI Analytics</a></li>
+                    <li><a href="#" onclick="handleMenuClick(this, 'news')"><i class="fas fa-newspaper"></i> Announcements</a></li>
                 </ul>
             </nav>
             
@@ -107,91 +128,366 @@
                 
                 <!-- All Series Overview -->
                 <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-chart-pie"></i> League Overview</h3>
+                <!-- Dashboard Overview -->
+                <section id="dashboard" class="section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-shield-alt"></i></div>
+                            <div class="stat-info">
+                                <h3>Active Clubs</h3>
+                                <p class="stat-number" id="dashTotalClubs">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success"><i class="fas fa-graduation-cap"></i></div>
+                            <div class="stat-info">
+                                <h3>Academies</h3>
+                                <p class="stat-number" id="dashTotalAcademies">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon warning"><i class="fas fa-school"></i></div>
+                            <div class="stat-info">
+                                <h3>Schools</h3>
+                                <p class="stat-number" id="dashTotalSchools">0</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon info"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <h3>Total Players</h3>
+                                <p class="stat-number" id="dashTotalPlayers">0</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-body">
-                        <div class="league-standings">
-                            <div class="league-table">
-                                <h4>Professional Clubs</h4>
+
+                    <!-- Regional Distribution / Recent Activity -->
+                    <div class="card mt-4">
+                        <div class="card-header">
+                            <h3><i class="fas fa-chart-area"></i> National Player Distribution</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="regionalChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Players Section -->
+                <section id="players" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-users"></i> National Player Registry</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-controls mb-3">
+                                <input type="text" placeholder="Search national database..." id="playerSearch" class="form-control" onkeyup="searchPlayers()">
+                            </div>
+                            <div class="table-responsive">
                                 <table class="data-table">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
-                                            <th>Club</th>
-                                            <th>Played</th>
-                                            <th>Won</th>
-                                            <th>Drawn</th>
-                                            <th>Lost</th>
-                                            <th>Points</th>
+                                            <th>Photo</th>
+                                            <th>Name</th>
+                                            <th>Position</th>
+                                            <th>Jersey</th>
+                                            <th>Nationality</th>
+                                            <th>Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="clubStandings"></tbody>
+                                    <tbody id="allPlayersTableBody"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Entity Summary -->
-                <div class="content-grid">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-shield-alt"></i> Top Clubs by Players</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="entity-list" id="topClubs"></div>
-                        </div>
+
+                <!-- Section: Leagues -->
+                <div id="leaguesSection" class="dashboard-section section" style="display:none;">
+                    <div class="section-header">
+                        <h2><i class="fas fa-trophy"></i> League Management</h2>
+                        <button class="btn-primary" onclick="showCreateLeagueModal()">
+                            <i class="fas fa-plus"></i> Create New League
+                        </button>
                     </div>
-                    
-                    <div class="card">
-                        <div class="card-header">
-                            <h3><i class="fas fa-star"></i> Top Performers</h3>
+                    <div class="grid-container" id="leaguesGrid">
+                        <!-- Leagues will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Section: National News -->
+                <div id="newsSection" class="dashboard-section section" style="display:none;">
+                    <div class="section-header">
+                        <h2><i class="fas fa-bullhorn"></i> National Announcements</h2>
+                        <button class="btn-primary" onclick="showCreateNewsModal()">
+                            <i class="fas fa-paper-plane"></i> Publish News
+                        </button>
+                    </div>
+                    <div class="content-grid">
+                        <div class="card">
+                            <div class="card-header"><h3>Recent Announcements</h3></div>
+                            <div class="card-body" id="announcementsList">
+                                <!-- News will be loaded here -->
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="top-performers" id="topPerformers"></div>
+                        <div class="card">
+                            <div class="card-header"><h3>News Strategy</h3></div>
+                            <div class="card-body">
+                                <p>Use this tool to communicate with all clubs, academies, and schools across Rwanda. Official notices published here will appear on their respective dashboards.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- All Players (FERWAFA can see everyone) -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3><i class="fas fa-users"></i> All Registered Players</h3>
-                        <div class="card-actions">
-                            <input type="text" placeholder="Search players..." id="playerSearch" 
-                                   onkeyup="searchAllPlayers()">
+
+                <!-- Section: Talent Discovery Hub -->
+                <div id="statisticsSection" class="dashboard-section section" style="display:none;">
+                    <div class="section-header">
+                        <h2><i class="fas fa-star"></i> Talent Discovery Hub</h2>
+                        <div class="filter-bar">
+                            <select id="talentPosition">
+                                <option value="">All Positions</option>
+                                <option value="Forward">Forwards</option>
+                                <option value="Midfielder">Midfielders</option>
+                                <option value="Defender">Defenders</option>
+                                <option value="Goalkeeper">Goalkeepers</option>
+                            </select>
+                            <select id="talentAgeMax">
+                                <option value="30">All Ages</option>
+                                <option value="17">Under 17</option>
+                                <option value="20">Under 20</option>
+                                <option value="23">Under 23</option>
+                            </select>
+                            <button class="btn-secondary" onclick="loadTalentDiscovery()">
+                                <i class="fas fa-search"></i> Discover
+                            </button>
                         </div>
                     </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="data-table" id="allPlayersTable">
-                                <thead>
-                                    <tr>
-                                        <th>Reg. Number</th>
-                                        <th>Name</th>
-                                        <th>Entity</th>
-                                        <th>Position</th>
-                                        <th>Jersey #</th>
-                                        <th>Nationality</th>
-                                        <th>Goals</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="allPlayersTableBody"></tbody>
-                            </table>
-                        </div>
+                    <div class="talent-grid" id="talentDiscoveryGrid">
+                        <!-- Top talents cards here -->
                     </div>
                 </div>
+
+                <!-- Section: Matches -->
+                <div id="matchesSection" class="dashboard-section section" style="display:none;">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-futbol"></i> National Match Tracker</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date</th>
+                                            <th>Matchup</th>
+                                            <th>Teams</th>
+                                            <th>Venue</th>
+                                            <th>Score</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="nationalMatchesTableBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Talent Hub Section -->
+                <section id="statistics" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-microscope"></i> AI-Driven Talent Discovery</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="filter-bar mb-4" style="background: #f8f9fa; padding: 20px; border-radius: 10px; display: flex; gap: 20px; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; flex: 1;">
+                                    <label>Position</label>
+                                    <select id="talentPositionStats" class="form-control" onchange="loadTalentDiscoveryStats()">
+                                        <option value="Forward">Forward</option>
+                                        <option value="Midfielder">Midfielder</option>
+                                        <option value="Defender">Defender</option>
+                                        <option value="Goalkeeper">Goalkeeper</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="margin: 0; flex: 1;">
+                                    <label>Max Age</label>
+                                    <input type="number" id="talentAgeMaxStats" value="23" class="form-control" onchange="loadTalentDiscoveryStats()">
+                                </div>
+                                <button class="btn btn-primary" onclick="loadTalentDiscoveryStats()">
+                                    <i class="fas fa-search"></i> Discover Talent
+                                </button>
+                            </div>
+                            <div id="talentDiscoveryGridStats" class="talent-grid">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- News Section -->
+                <section id="news" class="section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-newspaper"></i> National Announcements</h3>
+                            <button class="btn btn-primary" onclick="showCreateNewsModal()">
+                                <i class="fas fa-plus"></i> Publish Update
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div id="announcementsListNews" class="announcement-news-list">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
             </div>
         </main>
-    </div>
+</div>
     
+    <!-- Modals -->
+    <div id="leagueModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('leagueModal')">&times;</span>
+            <h2><i class="fas fa-plus-circle"></i> Create National League</h2>
+            <form id="leagueForm">
+                <div class="form-group">
+                    <label>League Name</label>
+                    <input type="text" id="leagueName" placeholder="e.g. Rwanda Premier League" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="leagueCategory">
+                            <option value="Professional">Professional</option>
+                            <option value="Academy">Academy</option>
+                            <option value="School">School</option>
+                            <option value="Amateur">Amateur</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Season</label>
+                        <input type="text" id="leagueSeason" placeholder="2023/2024" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="leagueDescription" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Create League</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="newsModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('newsModal')">&times;</span>
+            <h2><i class="fas fa-bullhorn"></i> Publish National Announcement</h2>
+            <form id="newsForm">
+                <div class="form-group">
+                    <label>Headline</label>
+                    <input type="text" id="newsTitle" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="newsCategory">
+                            <option value="General">General</option>
+                            <option value="Match Update">Match Update</option>
+                            <option value="Scouting">Scouting</option>
+                            <option value="Regulation">Regulation</option>
+                            <option value="Urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Target Audience</label>
+                        <select id="newsTarget">
+                            <option value="all">Everyone</option>
+                            <option value="club">Clubs Only</option>
+                            <option value="academy">Academies Only</option>
+                            <option value="school">Schools Only</option>
+                            <option value="scout">Scouts Only</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Content</label>
+                    <textarea id="newsContent" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Publish Officially</button>
+            </form>
+        </div>
+    </div>
+
     <script src="js/main.js"></script>
     <script>
+        // Sidebar navigation handler
+        function handleMenuClick(el, sectionId) {
+            document.querySelectorAll('.sidebar-nav li').forEach(li => li.classList.remove('active'));
+            el.parentElement.classList.add('active');
+            showSection(sectionId);
+        }
+
+        // Initialize on load
         document.addEventListener('DOMContentLoaded', () => {
-            checkAuth();
             loadFERWAFADashboard();
         });
+
+        // League form submission
+        document.getElementById('leagueForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                name: document.getElementById('leagueName').value,
+                category: document.getElementById('leagueCategory').value,
+                season: document.getElementById('leagueSeason').value,
+                description: document.getElementById('leagueDescription').value
+            };
+            
+            try {
+                await apiRequest('/leagues', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                showToast('League created successfully', 'success');
+                closeModal('leagueModal');
+                loadLeagues();
+                e.target.reset();
+            } catch (err) {
+                showToast('Error creating league: ' + err.message, 'error');
+            }
+        });
+
+        // News form submission
+        document.getElementById('newsForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = {
+                title: document.getElementById('newsTitle').value,
+                category: document.getElementById('newsCategory').value,
+                target_role: document.getElementById('newsTarget').value,
+                content: document.getElementById('newsContent').value
+            };
+            
+            try {
+                await apiRequest('/announcements', {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                showToast('Announcement published successfully', 'success');
+                closeModal('newsModal');
+                loadAnnouncements();
+                e.target.reset();
+            } catch (err) {
+                showToast('Error publishing announcement: ' + err.message, 'error');
+            }
+        });
+
+        // Generic modal closer for FERWAFA modals
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
     </script>
+    
 </body>
 </html>

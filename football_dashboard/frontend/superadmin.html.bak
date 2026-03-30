@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Football Academy Management</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-wrapper">
+        <!-- Sidebar -->
+        <aside class="sidebar admin-sidebar">
+            <div class="sidebar-header">
+                <div class="logo admin-logo">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <h2>Super Admin</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="superadmin.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                    <li><a href="#" onclick="showSection('clubs')"><i class="fas fa-shield-alt"></i> Clubs</a></li>
+                    <li><a href="#" onclick="showSection('academies')"><i class="fas fa-graduation-cap"></i> Academies</a></li>
+                    <li><a href="#" onclick="showSection('schools')"><i class="fas fa-school"></i> Schools</a></li>
+                    <li><a href="#" onclick="showSection('scouts')"><i class="fas fa-search"></i> Scouts</a></li>
+                    <li><a href="#" onclick="showSection('ferwafa')"><i class="fas fa-flag"></i> FERWAFA</a></li>
+                    <li><a href="#" onclick="showSection('players')"><i class="fas fa-users"></i> All Players</a></li>
+                    <li><a href="#" onclick="showSection('matches')"><i class="fas fa-futbol"></i> Matches</a></li>
+                    <li><a href="#" onclick="showSection('live-stream')"><i class="fas fa-video"></i> Live Streams</a></li>
+                    <li><a href="#" onclick="showSection('audit')"><i class="fas fa-history"></i> Activity Log</a></li>
+                    <li><a href="#" onclick="showSection('users')"><i class="fas fa-user-cog"></i> Users</a></li>
+                    <li><a href="#" onclick="showSection('settings')"><i class="fas fa-cog"></i> Settings</a></li>
+                </ul>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <span id="userName">Super Admin</span>
+                        <span class="badge role-admin">Super Admin</span>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main-content admin-content">
+            <header class="main-header admin-header">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">System Administration</h1>
+                <div class="header-actions">
+                    <div class="admin-badge">
+                        <i class="fas fa-crown"></i> Full Access
+                    </div>
+                </div>
+            </header>
+            
+            <div class="dashboard-content">
+                <!-- System Stats -->
+                <div class="stats-grid admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users-cog"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p class="stat-number" id="totalUsers">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Clubs</h3>
+                            <p class="stat-number" id="totalClubs">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Academies</h3>
+                            <p class="stat-number" id="totalAcademies">0</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon active">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Database Size</h3>
+                            <p class="stat-text" id="dbSize">0 MB</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- User Management -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users-cog"></i> User Management</h3>
+                        <button class="btn btn-sm btn-primary" onclick="showAddUserModal()">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="data-table" id="usersTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Username</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>Entity ID</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Entity Management -->
+                <div class="content-grid">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-building"></i> Manage Clubs</h3>
+                            <button class="btn btn-secondary" onclick="showAddEntityModal('club')">
+                                <i class="fas fa-plus"></i> Add Club
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="entity-list" id="clubsList"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-graduation-cap"></i> Manage Academies</h3>
+                            <button class="btn btn-secondary" onclick="showAddEntityModal('academy')">
+                                <i class="fas fa-plus"></i> Add Academy
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="entity-list" id="academiesList"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- System Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog"></i> System Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="settings-grid">
+                            <div class="setting-item">
+                                <label>Live Update Interval</label>
+                                <select id="updateInterval">
+                                    <option value="15" selected>15 minutes</option>
+                                    <option value="30">30 minutes</option>
+                                    <option value="60">1 hour</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>ML Processing</label>
+                                <select id="mlSetting">
+                                    <option value="cpu" selected>CPU Only</option>
+                                    <option value="gpu">GPU (if available)</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Data Retention</label>
+                                <select id="retention">
+                                    <option value="1">1 Year</option>
+                                    <option value="2">2 Years</option>
+                                    <option value="5">5 Years</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <button class="btn btn-primary" onclick="saveSettings()">
+                                    Save Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CLUBS Section -->
+                <div class="card" id="clubs" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-shield-alt"></i> Clubs Management</h3>
+                        <button class="btn btn-primary" onclick="addClub()">
+                            <i class="fas fa-plus"></i> Add Club
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Short Name</th><th>Stadium</th><th>Founded</th><th>Actions</th></tr></thead>
+                            <tbody id="clubsTableBody"><tr><td colspan="6">Loading clubs...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- ACADEMIES Section -->
+                <div class="card" id="academies" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-graduation-cap"></i> Academies Management</h3>
+                        <button class="btn btn-primary" onclick="addAcademy()">
+                            <i class="fas fa-plus"></i> Add Academy
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Director</th><th>Phone</th><th>Established</th><th>Actions</th></tr></thead>
+                            <tbody id="academiesTableBody"><tr><td colspan="6">Loading academies...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- SCHOOLS Section -->
+                <div class="card" id="schools" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-school"></i> Schools Management</h3>
+                        <button class="btn btn-primary" onclick="addSchool()">
+                            <i class="fas fa-plus"></i> Add School
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Address</th><th>Phone</th><th>Established</th><th>Actions</th></tr></thead>
+                            <tbody id="schoolsTableBody"><tr><td colspan="6">Loading schools...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- SCOUTS Section -->
+                <div class="card" id="scouts" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-search"></i> Scouts Management</h3>
+                        <button class="btn btn-primary" onclick="addScout()">
+                            <i class="fas fa-plus"></i> Add Scout
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Region</th><th>Actions</th></tr></thead>
+                            <tbody id="scoutsTableBody"><tr><td colspan="6">Loading scouts...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- FERWAFA Section -->
+                <div class="card" id="ferwafa" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-flag"></i> FERWAFA Management</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Football Federation management</p>
+                    </div>
+                </div>
+                
+                <!-- PLAYERS Section -->
+                <div class="card" id="players" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-users"></i> All Players</h3>
+                        <button class="btn btn-primary" onclick="addPlayer()">
+                            <i class="fas fa-plus"></i> Add Player
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Name</th><th>Position</th><th>Nationality</th><th>Registration</th><th>Entity</th></tr></thead>
+                            <tbody id="allPlayersTableBody"><tr><td colspan="6">Loading players...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- MATCHES Section -->
+                <div class="card" id="matches" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-futbol"></i> Matches</h3>
+                        <button class="btn btn-primary" onclick="addMatch()">
+                            <i class="fas fa-plus"></i> Add Match
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <ul id="matchList" style="list-style:none;padding:0;"></ul>
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Home Team</th><th>Away Team</th><th>Date</th><th>Score</th><th>Status</th></tr></thead>
+                            <tbody id="matchesTableBody"><tr><td colspan="6">Loading matches...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- LIVE STREAM Section -->
+                <div class="card" id="live-stream" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-video"></i> Live Streaming Control</h3>
+                        <button class="btn btn-success" onclick="createStream()">
+                            <i class="fas fa-plus"></i> New Stream
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="stream-info">
+                            <h4><i class="fas fa-broadcast-tower"></i> Active Streams</h4>
+                            <table class="data-table">
+                                <thead><tr><th>ID</th><th>Match</th><th>Team</th><th>Status</th><th>Started</th><th>Actions</th></tr></thead>
+                                <tbody id="streamsTableBody"><tr><td colspan="6">Loading streams...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- ACTIVITY LOG Section -->
+                <div class="card" id="audit" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Activity Log (Everything Done)</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Table</th><th>Details</th><th>IP Address</th></tr></thead>
+                            <tbody id="auditTableBody"><tr><td colspan="6">Loading activity log...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- USERS Section -->
+                <div class="card" id="users" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-user-cog"></i> Users Management</h3>
+                        <button class="btn btn-primary" onclick="openModal()">
+                            <i class="fas fa-plus"></i> Add User
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="data-table">
+                            <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Role</th><th>Entity ID</th><th>Actions</th></tr></thead>
+                            <tbody id="userTable"><tr><td colspan="6">Loading users...</td></tr></tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- SETTINGS Section -->
+                <div class="card" id="settings" style="display:none;">
+                    <div class="card-header">
+                        <h3><i class="fas fa-cog"></i> System Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>System settings saved.</p>
+                    </div>
+                </div>
+        </main>
+    </div>
+    
+    <!-- Simple Modal -->
+    <div class="modal" id="modal">
+        <div class="modal-box">
+            <h3>Add User</h3>
+            <input type="text" id="name" placeholder="Name">
+            <input type="email" id="email" placeholder="Email">
+            <button onclick="saveUser()">Save</button>
+            <button onclick="closeModal()">Close</button>
+        </div>
+    </div>
+    
+    <!-- Advanced User Modal -->
+    <div class="modal" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <button class="modal-close" onclick="closeUserModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="userForm" class="modal-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Username *</label>
+                        <input type="text" id="newUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email *</label>
+                        <input type="email" id="newEmail" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Password *</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Role *</label>
+                        <select id="newRole" required>
+                            <option value="">Select Role</option>
+                            <option value="school">School</option>
+                            <option value="academy">Academy</option>
+                            <option value="club">Club</option>
+                            <option value="scout">Scout</option>
+                            <option value="ferwafa">FERWAFA</option>
+                            <option value="superadmin">Super Admin</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeUserModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+            loadSuperAdminDashboard();
+        });
+    </script>
+</body>
+</html>
