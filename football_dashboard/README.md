@@ -19,10 +19,11 @@ A comprehensive full-stack web application for managing football academies, scho
 - **Player Management**: Add, edit, delete players with auto-generated registration numbers
 - **Match Management**: Schedule matches, set lineups, track results
 - **Statistics**: Track goals, assists, minutes played, cards
-- **Live Updates**: Data refreshes every 15 minutes
-- **Machine Learning**: Photo upload for player identification (CPU-friendly)
-- **GPS Integration**: Placeholder for future GPS tracking
-- **Responsive Design**: Works on desktop and mobile devices
+- **AI Performance Analytics**: Real-time tracking of distance covered, top speed, and sprint count
+- **Live Updates**: Data refreshes and AI metric recalculations
+- **Machine Learning**: YOLOv8-based player identification and tracking
+- **GPS Integration**: Placeholder and historical GPS tracking support
+- **Responsive Design**: High-fidelity dark mode interface for mobile and desktop
 
 ## Project Structure
 
@@ -98,13 +99,19 @@ python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
-pip install flask flask-cors flask-jwt-extended flask-bcrypt mysql-connector-python
+pip install -r requirements.txt
 
-# Install AI/ML dependencies (optional - for player tracking)
-pip install ultralytics opencv-python bytetrack numpy
+# Create .env file for configuration
+# Copy values from .env.example if provided, or set:
+# DB_HOST=localhost
+# DB_USER=root
+# DB_PASSWORD=
+# DB_NAME=football_dashboard
+# SECRET_KEY=your-secret-key-here
+# JWT_SECRET_KEY=your-jwt-secret-here
 
-# Configure database connection in app.py
-# Update DB_CONFIG with your MySQL credentials
+# Run database migrations (Crucial for AI metrics)
+python run_safe_migration.py
 
 # Run the server
 python app.py
